@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIDEEP Conversation Archiver — User Manual</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     THEME VARIABLES
+     ============================================================ */
+  :root, [data-theme="dark"]{
+    --bg:#0a0d14; --bg-2:#121724; --bg-3:#1a2030;
+    --text:#e7e9f0; --muted:#8a90a3;
+    --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.14);
+    --user:#6366f1; --user-2:#a855f7; --ai:#10b981; --ai-2:#06b6d4;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 28px -14px rgba(0,0,0,.6);
+    --shadow-lg:0 24px 48px -22px rgba(0,0,0,.75);
+    --radius:18px;
+    --code-bg:#070a11; --code-text:#e2e8f0; --code-fg:#c7d2fe;
+    --kbd-fg:#cbd5e1;
+    --surface-glass:rgba(15,23,42,.55);
+    --surface-soft:rgba(15,23,42,.5);
+    --surface-hover:rgba(15,23,42,.82);
+    --card-grad-1:rgba(18,23,36,.72);
+    --card-grad-2:rgba(18,23,36,.48);
+    --input-bg:rgba(2,6,23,.7);
+    --glow-a:rgba(99,102,241,.14); --glow-b:rgba(16,185,129,.12);
+    --hero-grad-1:#ffffff; --hero-grad-2:#c7d2fe; --hero-grad-3:#a7f3d0;
+    --fs:16px;
+  }
+  [data-theme="light"]{
+    --bg:#f5f6fa; --bg-2:#ffffff; --bg-3:#eceef5;
+    --text:#141826; --muted:#6b7280;
+    --border:rgba(15,23,42,.09); --border-strong:rgba(15,23,42,.16);
+    --shadow:0 1px 2px rgba(15,23,42,.04),0 10px 28px -14px rgba(15,23,42,.18);
+    --shadow-lg:0 24px 48px -22px rgba(15,23,42,.3);
+    --code-bg:#0f172a; --code-text:#e2e8f0; --code-fg:#4f46e5;
+    --kbd-fg:#334155;
+    --surface-glass:rgba(255,255,255,.75);
+    --surface-soft:rgba(255,255,255,.6);
+    --surface-hover:rgba(255,255,255,.95);
+    --card-grad-1:rgba(255,255,255,.85);
+    --card-grad-2:rgba(255,255,255,.55);
+    --input-bg:rgba(255,255,255,.95);
+    --glow-a:rgba(99,102,241,.16); --glow-b:rgba(16,185,129,.14);
+    --hero-grad-1:#141826; --hero-grad-2:#6366f1; --hero-grad-3:#10b981;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:100px;font-size:var(--fs)}
+  body{
+    margin:0;min-height:100vh;background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.7;-webkit-font-smoothing:antialiased;
+    transition:background .3s,color .3s;
+  }
+  html[dir="rtl"] body{font-family:"Vazirmatn",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.9}
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(900px 500px at 85% -10%,var(--glow-a),transparent 60%),
+      radial-gradient(800px 500px at -10% 100%,var(--glow-b),transparent 60%);
+    transition:background .3s;
+  }
+  button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+  a{color:var(--user);text-decoration:none;transition:color .15s}
+  a:hover{color:var(--user-2)}
+  .progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--user),var(--user-2),var(--ai));z-index:200;transition:width .08s linear;box-shadow:0 0 12px var(--user)}
+  html[dir="rtl"] .progress{left:auto;right:0}
+  .bismillah{text-align:center;font-family:"Amiri","Vazirmatn",serif;font-size:1rem;color:var(--muted);padding:14px 16px 0;direction:rtl;opacity:.9}
+  html[dir="ltr"] .bismillah{font-family:"Amiri",serif;letter-spacing:.02em}
+
+  /* Header controls */
+  .lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:999px;border:1px solid var(--border);background:var(--surface-glass);transition:background .3s,border-color .3s}
+  .lang-switch button{padding:5px 12px;border-radius:999px;font-size:.75rem;font-weight:700;color:var(--muted);transition:all .2s;line-height:1.5}
+  .lang-switch button[data-set-lang="fa"]{font-family:"Vazirmatn",sans-serif}
+  .lang-switch button:hover{color:var(--text)}
+  .lang-switch button.lang-on{color:#fff;background:linear-gradient(135deg,#6366f1,#10b981);box-shadow:0 6px 16px -8px #6366f1}
+
+  .theme-toggle{display:inline-grid;place-items:center;flex:none;width:36px;height:36px;border-radius:12px;border:1px solid var(--border);background:var(--surface-glass);color:var(--muted);transition:all .2s}
+  .theme-toggle:hover{color:var(--text);border-color:color-mix(in srgb,var(--user) 55%,var(--border));transform:translateY(-1px);box-shadow:var(--shadow)}
+  .theme-toggle svg{width:16px;height:16px;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+  .theme-toggle:hover svg{transform:rotate(25deg)}
+  .theme-toggle .sun{display:none}
+  .theme-toggle .moon{display:block}
+  [data-theme="dark"] .theme-toggle .sun{display:block}
+  [data-theme="dark"] .theme-toggle .moon{display:none}
+
+  .brand-pill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface-glass);transition:all .25s}
+  html[dir="rtl"] .brand-pill{letter-spacing:0;text-transform:none;font-size:.78rem}
+  .brand-pill:hover{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--user),var(--ai));transform:translateY(-1px);box-shadow:0 8px 20px -10px var(--user)}
+  .brand-pill svg{width:12px;height:12px}
+
+  /* Cards */
+  .card{background:linear-gradient(180deg,var(--card-grad-1),var(--card-grad-2));border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s,background .3s}
+  .card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(600px 200px at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--user) 9%,transparent),transparent 60%)}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:color-mix(in srgb,var(--user) 40%,var(--border))}
+  .card:hover::after{opacity:1}
+  .card.ai::after{background:radial-gradient(600px 200px at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--ai) 11%,transparent),transparent 60%)}
+  .card.ai:hover{border-color:color-mix(in srgb,var(--ai) 40%,var(--border))}
+
+  .reveal{opacity:0;transform:translateY(22px)}
+  .reveal.in{opacity:1;transform:none;transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}.reveal{opacity:1;transform:none}}
+
+  /* Hero */
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;letter-spacing:-.03em;font-weight:850;-webkit-background-clip:text;background-clip:text;color:transparent;margin:18px 0 10px;background:linear-gradient(120deg,var(--hero-grad-1) 25%,var(--hero-grad-2) 60%,var(--hero-grad-3) 90%);transition:background .3s}
+  .hero p.lead{color:var(--muted);font-size:1.08rem;max-width:62ch;margin:0 0 22px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--muted);padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface-glass)}
+  html[dir="rtl"] .eyebrow{letter-spacing:0;text-transform:none;font-size:.78rem}
+  .eyebrow i{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--user),var(--ai));display:inline-block}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--surface-glass);border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .chip:hover{transform:translateY(-1px);box-shadow:var(--shadow);color:var(--text)}
+  .chip b{color:var(--text)}
+  .chip .sw{width:9px;height:9px;border-radius:50%}
+
+  /* Section */
+  .section{scroll-margin-top:100px}
+  .section-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .num-pill{display:inline-grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--user),var(--ai));color:#fff;font-weight:800;font-size:.85rem;box-shadow:0 10px 24px -10px var(--user);font-variant-numeric:tabular-nums}
+  .section-head h2{margin:0;font-size:clamp(1.3rem,2.4vw,1.7rem);font-weight:800;letter-spacing:-.02em;line-height:1.25;color:var(--text)}
+  html[dir="rtl"] .section-head h2{letter-spacing:0}
+  .section-sub{color:var(--muted);margin:0 0 20px;font-size:.98rem}
+
+  /* ToC */
+  .toc-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:11px;color:var(--muted);text-decoration:none;font-size:.85rem;line-height:1.4;transition:all .2s;position:relative;margin-bottom:2px;font-weight:500}
+  .toc-item:hover{background:var(--bg-3);color:var(--text);transform:translateX(3px)}
+  html[dir="rtl"] .toc-item:hover{transform:translateX(-3px)}
+  .toc-item.active{background:color-mix(in srgb,var(--user) 13%,transparent);color:var(--text);font-weight:600}
+  .toc-item.active::before{content:"";position:absolute;inset-inline-start:-10px;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--user)}
+  .toc-item .n{font-variant-numeric:tabular-nums;font-size:.72rem;color:var(--muted);min-width:1.6em;opacity:.8}
+
+  /* Step cards */
+  .step-card{display:grid;gap:20px}
+  @media(min-width:768px){.step-card{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:start;gap:28px}}
+  .step-num{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--user) 22%,transparent),color-mix(in srgb,var(--ai) 22%,transparent));border:1px solid color-mix(in srgb,var(--user) 35%,transparent);color:var(--user);font-weight:800;font-size:.9rem;font-variant-numeric:tabular-nums}
+  [data-theme="dark"] .step-num{color:#c7d2fe}
+  .step-card h3{margin:0 0 6px;font-size:1.05rem;font-weight:700;color:var(--text)}
+  .step-card p{margin:0;color:var(--muted);font-size:.93rem}
+
+  /* Mockups */
+  .mock-wrap{position:relative;border:1px solid var(--border);border-radius:18px;background:var(--card-grad-1);padding:22px 20px 20px;box-shadow:var(--shadow);transition:border-color .25s,background .3s}
+  .mock-wrap:hover{border-color:color-mix(in srgb,var(--user) 30%,var(--border))}
+  .mock-wrap[data-badge]::before{content:attr(data-badge);position:absolute;top:-10px;inset-inline-start:16px;font-size:.6rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:linear-gradient(135deg,var(--user),var(--ai));color:#fff;line-height:1.4;box-shadow:0 4px 12px -4px var(--user)}
+  html[dir="rtl"] .mock-wrap[data-badge]::before{letter-spacing:0;text-transform:none;font-size:.7rem;font-weight:700}
+
+  .mock-label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+  .mock-label .opt{opacity:.55;font-weight:400}
+  .mock-field{background:var(--input-bg);border:1px solid var(--border);border-radius:11px;padding:9px 13px;font-size:.85rem;color:var(--text);min-height:38px;line-height:1.5;word-break:break-word;transition:border-color .2s}
+  .mock-field:hover{border-color:var(--border-strong)}
+  .mock-field.empty{color:var(--muted);font-style:italic;opacity:.7}
+  .mock-textarea{background:var(--input-bg);border:1px solid var(--border);border-radius:11px;padding:10px 13px;font-size:.84rem;color:var(--text);line-height:1.65;min-height:82px;transition:border-color .2s}
+  .mock-textarea:hover{border-color:var(--border-strong)}
+
+  .mock-block{position:relative;border:1px solid var(--border);border-radius:16px;background:var(--input-bg);padding:14px 16px 14px 22px;transition:border-color .25s}
+  html[dir="rtl"] .mock-block{padding:14px 22px 14px 16px}
+  .mock-block::before{content:"";position:absolute;top:14px;bottom:14px;inset-inline-start:0;width:4px;border-radius:0 4px 4px 0;background:var(--user)}
+  html[dir="rtl"] .mock-block::before{border-radius:4px 0 0 4px}
+  .mock-block.ai::before{background:var(--ai)}
+  .mock-block:hover{border-color:var(--border-strong)}
+  .mock-block-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .mock-num{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:9px;font-size:.68rem;font-weight:800;background:color-mix(in srgb,var(--user) 15%,transparent);color:var(--user);font-variant-numeric:tabular-nums}
+  [data-theme="dark"] .mock-num{color:#a5b4fc}
+  .mock-block.ai .mock-num{background:color-mix(in srgb,var(--ai) 15%,transparent);color:var(--ai)}
+  [data-theme="dark"] .mock-block.ai .mock-num{color:#6ee7b7}
+  .mock-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:9px;background:var(--bg-3);border:1px solid var(--border);font-size:.78rem;font-weight:600;color:var(--text);line-height:1.5}
+  .mock-actions{margin-inline-start:auto;display:flex;gap:2px;align-items:center}
+  .mock-act{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;color:var(--muted);transition:all .15s}
+  .mock-act:hover{background:var(--bg-3);color:var(--text)}
+  .mock-act svg{width:14px;height:14px}
+  .mock-block-title{font-size:.88rem;font-weight:700;color:var(--text);padding:8px 12px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+  [data-theme="light"] .mock-block-title{background:#fff}
+  .mock-block-title.empty{color:var(--muted);font-weight:500;font-style:italic;opacity:.7}
+  .mock-block-text{padding:10px 13px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;font-size:.84rem;color:var(--text);line-height:1.65;min-height:60px;word-break:break-word}
+  [data-theme="light"] .mock-block-text{background:#fff}
+  .mock-block-text.empty{color:var(--muted);font-style:italic;opacity:.7;font-size:.82rem}
+  .mock-block-footer{display:flex;justify-content:space-between;gap:10px;font-size:.7rem;color:var(--muted);margin-top:8px;padding:0 2px}
+
+  .mock-add{display:flex;align-items:center;justify-content:center;gap:12px;padding:18px;border:2px dashed var(--border);border-radius:16px;color:var(--muted);font-weight:600;font-size:.9rem;transition:all .25s}
+  .mock-add:hover{border-color:color-mix(in srgb,var(--user) 55%,transparent);color:var(--text);background:color-mix(in srgb,var(--user) 6%,transparent)}
+  .mock-add .plus{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:var(--bg-3);font-size:1.15rem;font-weight:300;transition:transform .3s}
+  .mock-add:hover .plus{transform:rotate(90deg);background:linear-gradient(135deg,var(--user),var(--ai));color:#fff}
+
+  .mock-generate{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,var(--user),#8b5cf6,var(--ai));color:#fff;font-weight:700;font-size:.92rem;box-shadow:0 14px 30px -12px var(--user)}
+  .mock-generate svg{width:18px;height:18px}
+
+  .mock-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+  .mock-stat{padding:10px 6px;text-align:center;border-radius:12px;background:var(--bg-3);border:1px solid var(--border)}
+  .mock-stat b{display:block;font-size:1.05rem;color:var(--text);font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums}
+  .mock-stat span{font-size:.65rem;color:var(--muted);font-weight:600;display:block;margin-top:2px}
+
+  .mock-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--bg-3);border:1px solid var(--border);font-size:.76rem;font-weight:600}
+  .mock-toolbar .dot{width:8px;height:8px;border-radius:50%;background:var(--ai);flex:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--ai) 25%,transparent)}
+  .mock-toolbar .spacer{flex:1}
+  .mock-tb{padding:6px 12px;border-radius:9px;font-size:.72rem;font-weight:700;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;color:#fff}
+  .mock-tb.primary{background:linear-gradient(90deg,var(--user),var(--ai))}
+  .mock-tb.ghost{background:var(--surface-glass);color:var(--text);border:1px solid var(--border)}
+  .mock-tb.md{background:linear-gradient(90deg,#0ea5e9,#06b6d4)}
+
+  /* Buttons in mockups — secondary pill buttons */
+  .mock-btn{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border-radius:11px;background:var(--bg-3);border:1px solid var(--border);font-size:.85rem;font-weight:600;color:var(--text);transition:all .2s}
+  .mock-btn:hover{border-color:color-mix(in srgb,var(--user) 45%,var(--border))}
+  .mock-btn svg{width:15px;height:15px;color:var(--muted);flex:none}
+  .mock-btn.md-btn{background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(6,182,212,.15));border-color:rgba(14,165,233,.35);color:#67e8f9}
+  [data-theme="light"] .mock-btn.md-btn{color:#0e7490}
+  .mock-btn.danger-btn{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(244,63,94,.08));border-color:rgba(239,68,68,.3);color:#fca5a5}
+  [data-theme="light"] .mock-btn.danger-btn{color:#b91c1c}
+
+  .mock-section-title{display:flex;align-items:center;gap:10px;font-size:.7rem;font-weight:800;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+  html[dir="rtl"] .mock-section-title{letter-spacing:0;text-transform:none;font-size:.78rem}
+  .mock-section-title .line{height:1px;flex:1;background:var(--border)}
+
+  /* Connection lamp */
+  .mock-conn{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--input-bg);border:1px solid var(--border);border-radius:11px;font-size:.83rem;font-weight:600;transition:border-color .2s}
+  .mock-conn:hover{border-color:var(--border-strong)}
+  .lamp{width:11px;height:11px;border-radius:50%;flex:none}
+  .lamp.idle{background:#e2e8f0;box-shadow:0 0 0 3px rgba(226,232,240,.15)}
+  .lamp.connecting{background:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.25);animation:lampPulse 1.4s ease-in-out infinite}
+  .lamp.ok{background:var(--ai);box-shadow:0 0 0 3px color-mix(in srgb,var(--ai) 25%,transparent)}
+  .lamp.fail{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.28)}
+  @keyframes lampPulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+  .mock-select{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--input-bg);border:1px solid var(--border);border-radius:11px;font-size:.83rem;color:var(--text);transition:border-color .2s}
+  .mock-select:hover{border-color:var(--border-strong)}
+  .mock-select .caret{width:12px;height:12px;color:var(--muted);flex:none}
+
+  /* AI sidebar chat mock */
+  .mock-chat{display:flex;flex-direction:column;gap:10px;padding:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:12px;min-height:200px}
+  .mock-bubble{padding:9px 13px;border-radius:12px;font-size:.82rem;line-height:1.55;max-width:88%;position:relative}
+  .mock-bubble.user{align-self:flex-end;background:linear-gradient(135deg,var(--user),#8b5cf6);color:#fff;border-bottom-right-radius:4px}
+  html[dir="rtl"] .mock-bubble.user{border-bottom-right-radius:12px;border-bottom-left-radius:4px}
+  .mock-bubble.ai{align-self:flex-start;background:var(--bg-3);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+  html[dir="rtl"] .mock-bubble.ai{border-bottom-left-radius:12px;border-bottom-right-radius:4px}
+  .mock-bubble .bubble-actions{display:flex;gap:4px;margin-top:9px;padding-top:9px;border-top:1px solid var(--border);flex-wrap:wrap}
+  .mock-dir-btn{padding:3px 9px;border-radius:6px;font-size:.65rem;font-weight:700;color:var(--muted);background:var(--bg-2);border:1px solid var(--border);transition:all .15s;display:inline-flex;align-items:center;gap:4px}
+  .mock-dir-btn:hover{color:var(--text)}
+  .mock-dir-btn.on{background:color-mix(in srgb,var(--user) 18%,transparent);color:var(--user);border-color:color-mix(in srgb,var(--user) 40%,transparent)}
+  [data-theme="dark"] .mock-dir-btn.on{color:#a5b4fc}
+  .mock-dir-btn.write-on{background:color-mix(in srgb,var(--ai) 18%,transparent);color:var(--ai);border-color:color-mix(in srgb,var(--ai) 40%,transparent)}
+  [data-theme="dark"] .mock-dir-btn.write-on{color:#6ee7b7}
+
+  .mock-context-bar{display:flex;align-items:center;gap:8px;padding:8px 11px;background:color-mix(in srgb,var(--ai) 8%,transparent);border:1px solid color-mix(in srgb,var(--ai) 22%,transparent);border-radius:10px;font-size:.76rem;color:var(--text);margin-bottom:10px}
+  .mock-context-bar b{font-weight:700;color:var(--ai)}
+  [data-theme="dark"] .mock-context-bar b{color:#6ee7b7}
+  .mock-context-bar .ctx-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-weight:600;font-size:.78rem}
+
+  .mock-prompt-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .mock-tag{padding:5px 11px;border-radius:8px;font-size:.72rem;font-weight:600;color:var(--text);background:var(--bg-3);border:1px solid var(--border);transition:all .2s}
+  .mock-tag:hover{border-color:color-mix(in srgb,var(--user) 50%,transparent);background:color-mix(in srgb,var(--user) 8%,transparent)}
+
+  .mock-input-row{display:flex;gap:8px;margin-top:8px}
+  .mock-input{flex:1;padding:9px 13px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border);font-size:.82rem;color:var(--muted);font-style:italic;transition:border-color .2s}
+  .mock-input:hover{border-color:var(--border-strong)}
+  .mock-send{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--user),var(--ai));color:#fff;flex:none}
+
+  /* Archive sidebar mock (narrow) */
+  .mock-archive-sidebar{padding:14px;background:var(--card-grad-1);border:1px solid var(--border);border-radius:14px;font-size:.78rem}
+  .mock-archive-sidebar .sb-title{font-weight:800;font-size:.95rem;color:var(--text);margin-bottom:2px}
+  .mock-archive-sidebar .sb-meta{font-size:.7rem;color:var(--muted);margin-bottom:12px}
+  .mock-archive-sidebar .sb-input{padding:8px 11px;border-radius:10px;background:var(--input-bg);border:1px solid var(--border);font-size:.78rem;color:var(--muted);font-style:italic;margin-bottom:12px}
+  .mock-archive-sidebar .sb-toc-item{display:flex;gap:8px;padding:6px 8px;border-radius:8px;font-size:.78rem;color:var(--muted);margin-bottom:2px}
+  .mock-archive-sidebar .sb-toc-item.active{background:color-mix(in srgb,var(--user) 13%,transparent);color:var(--text);font-weight:600}
+  .mock-archive-sidebar .sb-foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px}
+  .mock-archive-sidebar .pill{padding:5px 10px;border-radius:8px;background:var(--bg-3);border:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+  .mock-archive-sidebar .pill.md{border-color:rgba(14,165,233,.35);color:#67e8f9}
+  [data-theme="light"] .mock-archive-sidebar .pill.md{color:#0e7490}
+  .mock-archive-sidebar .pill svg{width:12px;height:12px}
+
+  /* Markdown output block */
+  .mock-md-output{background:var(--code-bg);border-radius:12px;padding:14px 16px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.76rem;line-height:1.7;color:var(--code-text);overflow-x:auto;direction:ltr;text-align:left}
+  .mock-md-output .md-h1{color:#c7d2fe;font-weight:700}
+  .mock-md-output .md-b{color:#a7f3d0}
+  .mock-md-output .md-h2{color:#fcd34d;font-weight:700}
+  .mock-md-output .md-hr{color:#64748b}
+  .mock-md-output .md-empty{color:#64748b;font-style:italic}
+
+  /* Code block mock (for LTR/RTL/Aa mockup) */
+  .mock-codeblock{border-radius:12px;overflow:hidden;background:var(--code-bg);border:1px solid rgba(255,255,255,.08)}
+  .mock-codeblock .cb-head{display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.06);direction:ltr}
+  .mock-codeblock .cb-dots{display:inline-flex;gap:4px}
+  .mock-codeblock .cb-dots i{width:9px;height:9px;border-radius:50%;display:block}
+  .mock-codeblock .cb-dots i:nth-child(1){background:#ff5f57}
+  .mock-codeblock .cb-dots i:nth-child(2){background:#febc2e}
+  .mock-codeblock .cb-dots i:nth-child(3){background:#28c840}
+  .mock-codeblock .cb-lang{font-size:.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-left:4px}
+  .mock-codeblock .cb-actions{margin-left:auto;display:inline-flex;gap:5px}
+  .mock-codeblock .cb-btn{font-size:.66rem;font-weight:700;padding:4px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#94a3b8;line-height:1.2}
+  .mock-codeblock .cb-btn.on{color:#fff;background:#6366f1;border-color:#6366f1}
+  .mock-codeblock pre{margin:0;padding:14px 16px;color:var(--code-text);font-size:.78rem;line-height:1.65;direction:ltr;text-align:left;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .mock-codeblock .html-preview-bar{margin:0;padding:14px 16px;border-top:1px solid rgba(255,255,255,.06);background:#fff;color:#0f172a;font-family:ui-sans-serif,system-ui,sans-serif;font-size:.78rem;text-align:center}
+
+  /* Format rows */
+  .fmt-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface-soft);transition:all .25s}
+  .fmt-row:hover{border-color:color-mix(in srgb,var(--user) 45%,var(--border));background:var(--surface-hover);transform:translateY(-2px)}
+  .fmt-key{flex:none;min-width:110px}
+  .fmt-desc{color:var(--muted);font-size:.9rem}
+
+  .feat-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--user) 18%,transparent),color-mix(in srgb,var(--ai) 18%,transparent));border:1px solid color-mix(in srgb,var(--user) 28%,transparent);color:var(--user);transition:transform .3s}
+  [data-theme="dark"] .feat-icon{color:#a5b4fc}
+  .card:hover .feat-icon{transform:scale(1.08) rotate(-3deg)}
+
+  /* Shortcuts */
+  .shortcut-table{width:100%;border-collapse:separate;border-spacing:0 6px}
+  .shortcut-table tr{background:var(--surface-soft);transition:background .2s}
+  .shortcut-table tr:hover{background:var(--surface-hover)}
+  .shortcut-table td{padding:10px 14px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .shortcut-table tr td:first-child{border-inline-start:1px solid var(--border);border-start-start-radius:12px;border-end-start-radius:12px}
+  .shortcut-table tr td:last-child{border-inline-end:1px solid var(--border);border-start-end-radius:12px;border-end-end-radius:12px}
+  .shortcut-table td:first-child{width:44%;color:var(--muted);font-size:.9rem}
+  .shortcut-table td:last-child{text-align:end}
+
+  /* Tip / code / kbd */
+  .tip{border-inline-start:3px solid var(--ai);background:linear-gradient(to right,color-mix(in srgb,var(--ai) 10%,transparent),transparent 70%);padding:12px 16px;border-radius:0 12px 12px 0;color:var(--text);font-size:.92rem}
+  html[dir="rtl"] .tip{border-radius:12px 0 0 12px;background:linear-gradient(to left,color-mix(in srgb,var(--ai) 10%,transparent),transparent 70%)}
+  .tip strong{color:var(--ai)}
+  [data-theme="dark"] .tip strong{color:#a7f3d0}
+
+  .warn{border-inline-start:3px solid #f59e0b;background:linear-gradient(to right,rgba(245,158,11,.1),transparent 70%);padding:12px 16px;border-radius:0 12px 12px 0;color:var(--text);font-size:.92rem}
+  html[dir="rtl"] .warn{border-radius:12px 0 0 12px;background:linear-gradient(to left,rgba(245,158,11,.1),transparent 70%)}
+  .warn strong{color:#fbbf24}
+
+  code, .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.86em;direction:ltr;unicode-bidi:isolate;display:inline-block}
+  .inline-code{background:var(--bg-3);padding:.15em .5em;border-radius:6px;border:1px solid var(--border);color:var(--code-fg)}
+  .kbd{font-family:inherit;font-size:.72rem;padding:2px 7px;border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;background:var(--bg-3);color:var(--kbd-fg);direction:ltr;display:inline-block;font-weight:600}
+
+  .c-strong{color:var(--text)}
+  .c-muted{color:var(--muted)}
+  .c-user{color:var(--user)}
+  .c-ai{color:var(--ai)}
+
+  /* Toast */
+  .app-toast{position:fixed;inset-inline-start:50%;bottom:2.5rem;z-index:60;background:var(--text);color:var(--bg);font-size:.875rem;font-weight:600;padding:.625rem 1rem;border-radius:.75rem;box-shadow:var(--shadow-lg);pointer-events:none;opacity:0;transform:translateX(-50%) translateY(20px);transition:all .25s cubic-bezier(.2,.8,.2,1);max-width:90vw;text-align:center}
+  html[dir="rtl"] .app-toast{transform:translateX(50%) translateY(20px)}
+  .app-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  html[dir="rtl"] .app-toast.show{transform:translateX(50%) translateY(0)}
+
+  .foot{color:var(--muted);font-size:.82rem;text-align:center;padding:40px 20px 60px}
+  .foot a{font-weight:700}
+
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 50%,transparent);border-radius:8px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-track{background:transparent}
+  .ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+
+  /* Setup steps (small, for Ollama checklist) */
+  .setup-step{display:flex;gap:12px;align-items:flex-start}
+  .setup-step .bullet{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--user) 18%,transparent);color:var(--user);font-weight:800;font-size:.75rem;border:1px solid color-mix(in srgb,var(--user) 30%,transparent)}
+  [data-theme="dark"] .setup-step .bullet{color:#c7d2fe}
+  .setup-step .body{flex:1;min-width:0}
+  .setup-step .body h4{margin:0 0 3px;font-size:.95rem;font-weight:700;color:var(--text)}
+  .setup-step .body p{margin:0;color:var(--muted);font-size:.87rem;line-height:1.6}
+  .setup-step code{background:var(--code-bg);color:var(--code-text);padding:2px 8px;border-radius:6px;font-size:.78rem;border:1px solid rgba(255,255,255,.08)}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="bismillah" data-i18n="bismillah">In the name of God</div>
+
+<!-- Header -->
+<header class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2 flex flex-wrap items-center gap-4">
+  <div class="flex items-center gap-3">
+    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-emerald-500 grid place-items-center shadow-lg shadow-indigo-500/30">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H7l-3 3z"/><path d="M8 9h8M8 13h5"/></svg>
+    </div>
+    <div>
+      <h1 class="text-lg sm:text-xl font-extrabold tracking-tight c-strong" data-i18n="brandName">Conversation Archiver</h1>
+      <p class="text-xs c-muted" data-i18n="brandTag">User Manual · v2.8</p>
+    </div>
+  </div>
+
+  <div class="ms-auto flex items-center gap-2 flex-wrap">
+    <div class="lang-switch" role="group" aria-label="Language / زبان">
+      <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-set-lang="fa" aria-pressed="false">فارسی</button>
+    </div>
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme" data-i18n-title="themeToggleTip" title="Toggle theme">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+    <a href="https://eitaa.com/AIDEEP" target="_blank" rel="noopener" class="brand-pill">
+      <span data-i18n="byBrand">By AIDEEP</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 pb-24 grid lg:grid-cols-[260px_1fr] gap-8 lg:gap-12">
+
+  <!-- Sidebar ToC -->
+  <aside class="hidden lg:block lg:sticky lg:top-6 self-start">
+    <div class="text-[11px] font-bold c-muted uppercase tracking-[.16em] px-3 pb-2" data-i18n="tocTitle">On this page</div>
+    <nav id="toc" class="space-y-0.5">
+      <a class="toc-item" href="#s1"><span class="n">01</span><span data-i18n="toc1">What is it?</span></a>
+      <a class="toc-item" href="#s2"><span class="n">02</span><span data-i18n="toc2">Quick start</span></a>
+      <a class="toc-item" href="#s3"><span class="n">03</span><span data-i18n="toc3">Your workspace</span></a>
+      <a class="toc-item" href="#s4"><span class="n">04</span><span data-i18n="toc4">Building blocks</span></a>
+      <a class="toc-item" href="#s5"><span class="n">05</span><span data-i18n="toc5">Formatting text</span></a>
+      <a class="toc-item" href="#s6"><span class="n">06</span><span data-i18n="toc6">Ollama integration</span></a>
+      <a class="toc-item" href="#s7"><span class="n">07</span><span data-i18n="toc7">Preview &amp; download</span></a>
+      <a class="toc-item" href="#s8"><span class="n">08</span><span data-i18n="toc8">Markdown export</span></a>
+      <a class="toc-item" href="#s9"><span class="n">09</span><span data-i18n="toc9">Drafts &amp; import</span></a>
+      <a class="toc-item" href="#s10"><span class="n">10</span><span data-i18n="toc10">Inside the archive</span></a>
+      <a class="toc-item" href="#s11"><span class="n">11</span><span data-i18n="toc11">Keyboard shortcuts</span></a>
+      <a class="toc-item" href="#s12"><span class="n">12</span><span data-i18n="toc12">Tips &amp; best practice</span></a>
+    </nav>
+  </aside>
+
+  <!-- Content -->
+  <div class="min-w-0">
+
+    <!-- Hero -->
+    <section class="hero pt-6 pb-10 reveal">
+      <span class="eyebrow"><i></i><span data-i18n="heroBadge">User Manual · v2.8</span></span>
+      <h1 data-i18n="heroTitle">Master the Conversation Archiver</h1>
+      <p class="lead" data-i18n="heroSub">Turn any raw AI conversation into a polished, self-contained HTML archive — with optional local-AI auto-titling, an Ask-AI assistant in both the builder and the archive, code-block direction controls, an HTML preview, per-language drafts, and one-click Markdown export. This manual includes live examples of every screen.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="chip"><span class="sw" style="background:linear-gradient(135deg,#6366f1,#a855f7)"></span><b data-i18n="chip1">Self-contained .html</b></span>
+        <span class="chip"><span class="sw" style="background:linear-gradient(135deg,#10b981,#06b6d4)"></span><b data-i18n="chip2">Bilingual archives</b></span>
+        <span class="chip"><span class="sw" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)"></span><b data-i18n="chip3">Markdown export</b></span>
+        <span class="chip"><span class="sw" style="background:linear-gradient(135deg,#f59e0b,#10b981)"></span><b data-i18n="chip4">Ollama ready</b></span>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="section reveal mb-16" id="s1">
+      <div class="section-head">
+        <span class="num-pill">01</span>
+        <h2 data-i18n="s1Title">What is the Conversation Archiver?</h2>
+      </div>
+      <p class="section-sub" data-i18n-html="s1Body">A tiny browser tool that takes the plain text you copy from any AI chat — <b class="c-strong">ChatGPT, Claude, Gemini, DeepSeek,</b> or anything else — and packages it into a beautiful, <b class="c-strong">self-contained HTML archive</b>. The result is a single <code class="inline-code">.html</code> file you can open in any browser, share over email or messaging apps, print, or keep as a long-term record. You can also export the same conversation as a clean <b class="c-strong">Markdown</b> file, and — optionally — use a local AI to auto-title everything and answer follow-up questions inside the archive.</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card">
+          <div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7l9 5 9-5z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div>
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s1c1T">Offline &amp; private</h3>
+          <p class="c-muted text-sm m-0" data-i18n="s1c1B">Nothing is uploaded anywhere. Everything — from pasting to previewing to downloading — happens in your own browser.</p>
+        </div>
+        <div class="card ai">
+          <div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s1c2T">Zero dependencies</h3>
+          <p class="c-muted text-sm m-0" data-i18n="s1c2B">The generated file has no external links, no fonts to load, no scripts to fetch. It works offline, forever.</p>
+        </div>
+        <div class="card">
+          <div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h16"/></svg></div>
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s1c3T">Beautiful by default</h3>
+          <p class="c-muted text-sm m-0" data-i18n="s1c3B">Table of contents, live search, dark and light themes, one-click copy buttons, collapsible messages, code-direction controls, and a print-friendly layout.</p>
+        </div>
+        <div class="card ai">
+          <div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/></svg></div>
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s1c4T">Optional local AI</h3>
+          <p class="c-muted text-sm m-0" data-i18n="s1c4B">Connect to Ollama on your own machine to auto-title every block and ask the archive follow-up questions — no cloud, no cost.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section reveal mb-16" id="s2">
+      <div class="section-head">
+        <span class="num-pill">02</span>
+        <h2 data-i18n="s2Title">Quick start</h2>
+      </div>
+      <p class="section-sub" data-i18n="s2Sub">From a blank page to a downloadable archive in four steps. Each step shows a real example of what you'll see.</p>
+
+      <div class="grid gap-5">
+        <div class="card step-card">
+          <div>
+            <div class="flex items-start gap-4">
+              <span class="step-num">1</span>
+              <div>
+                <h3 data-i18n="s2s1T">Fill in the archive details</h3>
+                <p data-i18n="s2s1B">Give your archive a title, an optional subtitle, the display names you want shown for the User and the AI, and pick the output language (English or Persian). These appear in the final archive header and browser tab.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+            <div class="mock-label" data-i18n="mockArchTitleLabel">Archive title</div>
+            <div class="mock-field" data-i18n="mockArchTitleVal">The Art of Color in AI Imagery</div>
+            <div class="mock-label mt-3"><span data-i18n="mockSubLabel">Subtitle</span> <span class="opt" data-i18n="mockSubOpt">(optional)</span></div>
+            <div class="mock-field" data-i18n="mockSubVal">A compact course on choosing colors that work together.</div>
+            <div class="grid grid-cols-2 gap-3 mt-3">
+              <div>
+                <div class="mock-label" data-i18n="mockUserLabel">User display name</div>
+                <div class="mock-field" data-i18n="mockUserVal">Eitaa.com/AIDEEP</div>
+              </div>
+              <div>
+                <div class="mock-label" data-i18n="mockAiLabel">AI display name</div>
+                <div class="mock-field" data-i18n="mockAiVal">DeepSeek</div>
+              </div>
+            </div>
+            <div class="mock-label mt-3" data-i18n="mockOutLangLabel">Archive language</div>
+            <div class="mock-select">
+              <span data-i18n="mockOutLangVal">English — left-to-right</span>
+              <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="card step-card">
+          <div>
+            <div class="flex items-start gap-4">
+              <span class="step-num">2</span>
+              <div>
+                <h3 data-i18n="s2s2T">Add your conversation blocks</h3>
+                <p data-i18n-html="s2s2B">Click <b class="c-strong">“Add another block”</b> to create a new message. For each block, pick whether it is a <b class="c-user">User</b> message or an <b class="c-ai">AI</b> response — this changes its accent color in the archive.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+            <div class="mock-block" style="margin-bottom:10px">
+              <div class="mock-block-head">
+                <span class="mock-num">1</span>
+                <span class="mock-pill" data-i18n="mockUserPill">👤 User</span>
+                <div class="mock-actions">
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
+                </div>
+              </div>
+              <div class="mock-block-title empty" data-i18n="mockEmptyTitle">Add a short title…</div>
+              <div class="mock-block-text empty" data-i18n="mockEmptyText">Paste the message text here…</div>
+            </div>
+            <div class="mock-block ai">
+              <div class="mock-block-head">
+                <span class="mock-num">2</span>
+                <span class="mock-pill" data-i18n="mockAiPill">🤖 AI</span>
+                <div class="mock-actions">
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
+                </div>
+              </div>
+              <div class="mock-block-title empty" data-i18n="mockEmptyTitle">Add a short title…</div>
+              <div class="mock-block-text empty" data-i18n="mockEmptyText">Paste the message text here…</div>
+            </div>
+            <div class="mock-add mt-3">
+              <span class="plus">+</span>
+              <span data-i18n="mockAddBlockLabel">Add another block</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card step-card">
+          <div>
+            <div class="flex items-start gap-4">
+              <span class="step-num">3</span>
+              <div>
+                <h3 data-i18n="s2s3T">Paste your text</h3>
+                <p data-i18n="s2s3B">Copy a message from your AI chat and paste it into the block's text area. Optionally give the block a short title — that title will be used in the archive's table of contents.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+            <div class="mock-block">
+              <div class="mock-block-head">
+                <span class="mock-num">1</span>
+                <span class="mock-pill" data-i18n="mockUserPill">👤 User</span>
+                <div class="mock-actions">
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <span class="mock-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
+                </div>
+              </div>
+              <div class="mock-block-title" data-i18n="mockBlockTitle1">How do I choose colors for AI-generated images?</div>
+              <div class="mock-block-text" data-i18n="mockBlockText1">I love generating images with AI, but I have no idea how to pick colors that work well together. Can you give me a compact course on color theory for image generation?</div>
+              <div class="mock-block-footer"><span data-i18n="mockUserHint">User message</span><span data-i18n="mockWords1">28 words</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card step-card">
+          <div>
+            <div class="flex items-start gap-4">
+              <span class="step-num">4</span>
+              <div>
+                <h3 data-i18n="s2s4T">Generate &amp; download</h3>
+                <p data-i18n-html="s2s4B">Click <b class="c-strong">“Generate Archive”</b> to preview it instantly, then click <b class="c-strong">“Download .html”</b> to save the file. You can also click <b class="c-strong">“Export as Markdown”</b> any time to get the same conversation as a <code class="inline-code">.md</code> file.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+            <div class="mock-generate">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8z"/></svg>
+              <span data-i18n="mockGenerateLabel">Generate Archive</span>
+            </div>
+            <div class="mock-btn md-btn mt-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+              <span data-i18n="mockMdBtnLabel">Export as Markdown</span>
+            </div>
+            <div class="mock-stats">
+              <div class="mock-stat"><b>4</b><span data-i18n="mockStatBlocks">Blocks</span></div>
+              <div class="mock-stat"><b>168</b><span data-i18n="mockStatWords">Words</span></div>
+              <div class="mock-stat"><b>2</b><span data-i18n="mockStatCode">Code</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section reveal mb-16" id="s3">
+      <div class="section-head">
+        <span class="num-pill">03</span>
+        <h2 data-i18n="s3Title">Your workspace</h2>
+      </div>
+      <p class="section-sub" data-i18n="s3Sub">The interface is split into two columns. Everything you need lives in one of them.</p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="card">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 grid place-items-center text-white text-sm font-bold">L</span>
+            <h3 class="font-bold m-0 c-strong" data-i18n="s3LeftT">Left column — content</h3>
+          </div>
+          <ul class="m-0 ps-5 space-y-2 c-muted text-sm">
+            <li data-i18n="s3Left1">Archive title, subtitle, and display names</li>
+            <li data-i18n="s3Left2">The archive-language selector (English or Persian output)</li>
+            <li data-i18n="s3Left3">The list of conversation blocks</li>
+            <li data-i18n="s3Left4">The “Add another block” button at the bottom</li>
+          </ul>
+        </div>
+        <div class="card ai">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 grid place-items-center text-white text-sm font-bold">R</span>
+            <h3 class="font-bold m-0 c-strong" data-i18n="s3RightT">Right column — actions</h3>
+          </div>
+          <ul class="m-0 ps-5 space-y-2 c-muted text-sm">
+            <li data-i18n="s3Right1">The “Generate Archive” button, plus “Export as Markdown,” and quick stats</li>
+            <li data-i18n="s3Right2">The Project menu: Undo/Redo, Import, Export JSON, Load sample, Clear all, Reset all local data</li>
+            <li data-i18n="s3Right3">The Ollama Integration panel (optional local AI)</li>
+            <li data-i18n="s3Right4">A short formatting cheat sheet you can refer back to</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="section reveal mb-16" id="s4">
+      <div class="section-head">
+        <span class="num-pill">04</span>
+        <h2 data-i18n="s4Title">Building blocks</h2>
+      </div>
+      <p class="section-sub" data-i18n="s4Sub">Every message in your archive is one block. Here are two filled-in examples — a User message and an AI response.</p>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-5">
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-block">
+            <div class="mock-block-head">
+              <span class="mock-num">1</span>
+              <span class="mock-pill" data-i18n="mockUserPill">👤 User</span>
+              <div class="mock-actions">
+                <span class="mock-act" data-i18n-title="s4moveUp" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
+                <span class="mock-act" data-i18n-title="s4moveDown" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+                <span class="mock-act" data-i18n-title="s4insertAfter" title="Insert below"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="mock-act" data-i18n-title="s4deleteBlock" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
+              </div>
+            </div>
+            <div class="mock-block-title" data-i18n="mockBlockTitle1">How do I choose colors for AI-generated images?</div>
+            <div class="mock-block-text" data-i18n="mockBlockText1">I love generating images with AI, but I have no idea how to pick colors that work well together. Can you give me a compact course on color theory for image generation?</div>
+            <div class="mock-block-footer"><span data-i18n="mockUserHint">User message</span><span data-i18n="mockWords1">28 words</span></div>
+          </div>
+        </div>
+
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-block ai">
+            <div class="mock-block-head">
+              <span class="mock-num">2</span>
+              <span class="mock-pill" data-i18n="mockAiPill">🤖 AI</span>
+              <div class="mock-actions">
+                <span class="mock-act" data-i18n-title="s4moveUp" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
+                <span class="mock-act" data-i18n-title="s4moveDown" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+                <span class="mock-act" data-i18n-title="s4insertAfter" title="Insert below"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="mock-act" data-i18n-title="s4deleteBlock" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
+              </div>
+            </div>
+            <div class="mock-block-title" data-i18n="mockBlockTitle2">Hue, saturation, and value — the three dimensions of color</div>
+            <div class="mock-block-text" data-i18n="mockBlockText2">Every color has three properties: **hue** (the color itself — blue, red, yellow), **saturation** (how vivid or muted it is), and **value** (how light or dark it is). A compelling image rarely needs many colors — it needs the *right relationship* between a few.</div>
+            <div class="mock-block-footer"><span data-i18n="mockAiHint">AI response</span><span data-i18n="mockWords2">56 words</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s4c1T">Role selector</h3><p class="c-muted text-sm m-0" data-i18n="s4c1B">Choose 👤 User or 🤖 AI. The label, color, and icon in the archive change accordingly.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s4c2T">Block title</h3><p class="c-muted text-sm m-0" data-i18n="s4c2B">Optional. Shown in the table of contents and above the message. If you skip it, an automatic “Message N” is used — unless you have Ollama auto-title it for you.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s4c3T">Message body</h3><p class="c-muted text-sm m-0" data-i18n="s4c3B">Paste the raw text you copied from your AI chat. Formatting is preserved and enhanced — see the next section.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s4c4T">Block actions</h3><p class="c-muted text-sm m-0" data-i18n-html="s4c4B">Reorder with <b>↑</b> and <b>↓</b>, insert a fresh block below with <b>+</b>, ask the AI about this block with the robot icon, or delete with the trash icon. Empty blocks can be deleted without a confirmation.</p></div>
+      </div>
+      <div class="tip mt-4" data-i18n-html="s4Tip"><strong>Tip:</strong> keep one AI turn per block. Smaller blocks produce a cleaner table of contents and a more readable archive.</div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section reveal mb-16" id="s5">
+      <div class="section-head">
+        <span class="num-pill">05</span>
+        <h2 data-i18n="s5Title">Formatting your text</h2>
+      </div>
+      <p class="section-sub" data-i18n="s5Sub">You don't need to know markdown. Paste as-is, and the archive turns these patterns into clean, styled elements.</p>
+      <div class="grid gap-3">
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">```js … ```</code></div><div class="fmt-desc" data-i18n="s5f1">A code block — with its own language label, a copy button, and LTR/RTL/Aa controls.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">`inline`</code></div><div class="fmt-desc" data-i18n="s5f2">Inline code — great for function names, filenames, and commands.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">**bold**</code></div><div class="fmt-desc" data-i18n-html="s5f3">Renders as <b class="c-strong">bold</b> text for emphasis.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">- item</code></div><div class="fmt-desc" data-i18n="s5f4">Bulleted list. Consecutive lines starting with <code class="inline-code">-</code> or <code class="inline-code">*</code> become one list.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">1. item</code></div><div class="fmt-desc" data-i18n="s5f5">Numbered list. Works with both Latin and Persian digits.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code"># Heading</code></div><div class="fmt-desc" data-i18n="s5f6">A section heading. One or two <code class="inline-code">#</code> marks produce a larger heading.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">&gt; quote</code></div><div class="fmt-desc" data-i18n="s5f7">A blockquote with an accent border — useful for callouts and quotes.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">---</code></div><div class="fmt-desc" data-i18n="s5f8">A horizontal divider between sections.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">| a | b |</code></div><div class="fmt-desc" data-i18n="s5f9">A table. Add a <code class="inline-code">| --- | --- |</code> row under the header to activate it.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">https://…</code></div><div class="fmt-desc" data-i18n="s5f10">Links are detected automatically and rendered as clickable URLs.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><span class="c-muted text-sm" data-i18n="s5f11Key">blank line</span></div><div class="fmt-desc" data-i18n="s5f11">A blank line starts a new paragraph.</div></div>
+      </div>
+    </section>
+
+    <!-- 06 — OLLAMA (MAJOR UPDATE) -->
+    <section class="section reveal mb-16" id="s6">
+      <div class="section-head">
+        <span class="num-pill">06</span>
+        <h2 data-i18n="s6Title">Ollama integration — optional local AI</h2>
+      </div>
+      <p class="section-sub" data-i18n-html="s6Sub">Connect the archiver to <b class="c-strong">Ollama</b> — a free app that runs AI models on your own computer — and it can <b class="c-strong">auto-title every block</b> for you, and even answer follow-up questions right inside the builder <b>and</b> the generated archive. Ollama is entirely optional; everything else works without it. This section shows you how to set it up and use it.</p>
+
+      <!-- Setup checklist -->
+      <div class="card mb-5">
+        <h3 class="font-bold mb-4 c-strong text-lg" data-i18n="s6SetupTitle">Setting up Ollama (one-time, ~5 minutes)</h3>
+        <div class="grid gap-4">
+          <div class="setup-step">
+            <span class="bullet">1</span>
+            <div class="body">
+              <h4 data-i18n="s6Setup1T">Install Ollama</h4>
+              <p data-i18n-html="s6Setup1B">Download the free app from <b class="c-strong">ollama.com</b> and install it. It runs quietly in the background and hosts local AI models.</p>
+            </div>
+          </div>
+          <div class="setup-step">
+            <span class="bullet">2</span>
+            <div class="body">
+              <h4 data-i18n="s6Setup2T">Start it with the browser-friendly setting</h4>
+              <p data-i18n-html="s6Setup2B">Open a terminal / command prompt and run the command for your system. This tells Ollama to accept requests from your browser.</p>
+              <div class="mt-2 grid gap-2">
+                <div class="mock-select" style="cursor:default">
+                  <span><b class="c-muted" style="font-weight:700;font-size:.72rem" data-i18n="s6Windows">Windows</b> &nbsp; <code class="mono">set OLLAMA_ORIGINS=*</code> &nbsp;<span class="c-muted">then</span>&nbsp; <code class="mono">ollama serve</code></span>
+                </div>
+                <div class="mock-select" style="cursor:default">
+                  <span><b class="c-muted" style="font-weight:700;font-size:.72rem" data-i18n="s6MacLinux">macOS / Linux</b> &nbsp; <code class="mono">export OLLAMA_ORIGINS="*"</code> &nbsp;<span class="c-muted">then</span>&nbsp; <code class="mono">ollama serve</code></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="setup-step">
+            <span class="bullet">3</span>
+            <div class="body">
+              <h4 data-i18n="s6Setup3T">Pull at least one model</h4>
+              <p data-i18n-html="s6Setup3B">In another terminal, download a model, for example: <code class="mono">ollama pull gemma4</code>. Any model works — smaller models respond faster, larger ones are smarter.</p>
+            </div>
+          </div>
+          <div class="setup-step">
+            <span class="bullet">4</span>
+            <div class="body">
+              <h4 data-i18n="s6Setup4T">Click “Connect to Ollama” in the archiver</h4>
+              <p data-i18n="s6Setup4B">Back in the archiver, open the Ollama Integration panel and click the connect button. When the lamp turns green, you're in.</p>
+            </div>
+          </div>
+        </div>
+        <div class="warn mt-5" data-i18n-html="s6Cors"><strong>Red lamp?</strong> That almost always means Ollama wasn't started with the <code class="mono">OLLAMA_ORIGINS=*</code> setting from step 2. Close it, run the command again, and retry.</div>
+      </div>
+
+      <!-- Builder panel mockup -->
+      <h3 class="font-bold mb-3 c-strong flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full" style="background:var(--user)"></span>
+        <span data-i18n="s6BuilderHeading">On the builder page</span>
+      </h3>
+      <div class="grid md:grid-cols-2 gap-5 mb-6">
+        <div>
+          <p class="c-muted text-sm" data-i18n-html="s6BuilderBody">The <b class="c-strong">Ollama Integration</b> panel sits in the right column, between the <b class="c-strong">Project</b> menu and the <b class="c-strong">Formatting tips</b> card. It has three controls: a connect button with a status lamp, a model dropdown (populated from your installed Ollama models), and an Auto-title button.</p>
+          <div class="tip mt-4" data-i18n-html="s6LampTip"><strong>Lamp states:</strong> white = not tried yet, yellow = connecting, <b style="color:#10b981">green</b> = connected, <b style="color:#ef4444">red</b> = failed.</div>
+        </div>
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-section-title"><span data-i18n="mockOllamaHeading">Ollama Integration</span><span class="line"></span></div>
+          <div class="mock-conn">
+            <span class="lamp ok"></span>
+            <span data-i18n="mockConnected">Connected</span>
+          </div>
+          <div class="mock-label mt-3" data-i18n="mockModelLabel">Model</div>
+          <div class="mock-select">
+            <span>gemma4:latest</span>
+            <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="mock-btn mt-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+            <span data-i18n="mockAutoTitle">Auto-title</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto-title semantics -->
+      <h3 class="font-bold mb-3 c-strong flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full" style="background:var(--ai)"></span>
+        <span data-i18n="s6AutoTitleHeading">What “Auto-title” does</span>
+      </h3>
+      <div class="grid sm:grid-cols-2 gap-4 mb-6">
+        <div class="card">
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s6AT1T">Fills only empty fields</h3>
+          <p class="c-muted text-sm m-0" data-i18n="s6AT1B">Anything you typed yourself is left exactly as-is. The model only fills in titles and archive details that are blank.</p>
+        </div>
+        <div class="card ai">
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s6AT2T">Matches the source language</h3>
+          <p class="c-muted text-sm m-0" data-i18n="s6AT2B">English conversations get English titles. Persian conversations get Persian titles. And so on — the model is instructed to keep the language natural.</p>
+        </div>
+        <div class="card">
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s6AT3T">Order of operations</h3>
+          <p class="c-muted text-sm m-0" data-i18n-html="s6AT3B">Every untitled block is titled one-by-one, in order. Then the <b class="c-strong">Archive title</b> and <b class="c-strong">Subtitle</b> are generated from the first user message and the first AI message — wherever they appear in the thread, so reordering or inserting blocks never breaks it.</p>
+        </div>
+        <div class="card ai">
+          <h3 class="font-bold mb-1 c-strong" data-i18n="s6AT4T">Safe fallback</h3>
+          <p class="c-muted text-sm m-0" data-i18n="s6AT4B">If the model returns nothing useful for a block, a short snippet from the message text is used instead — you never end up with an empty title.</p>
+        </div>
+      </div>
+
+      <!-- Builder Ask-AI -->
+      <h3 class="font-bold mb-3 c-strong flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full" style="background:var(--user)"></span>
+        <span data-i18n="s6AskBuilderHeading">“Ask AI” in the builder — per-block assistant</span>
+      </h3>
+      <p class="c-muted text-sm mb-4" data-i18n-html="s6AskBuilderBody">Every block in the builder carries an <b class="c-strong">Ask AI</b> button (a robot icon, next to the drag handle). Click it and an assistant panel slides in — on the <b>left</b> in English, on the <b>right</b> in Persian. The block you clicked is set as the <b class="c-strong">context</b>, so the model always knows what you're asking about. You can ask it to summarize, translate, rewrite, explain, or answer anything — and then <b class="c-strong">write the reply straight back into your draft</b>.</p>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-6">
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-context-bar">
+            <b data-i18n="mockContextLabel">Context:</b>
+            <span class="ctx-title" data-i18n="mockBlockTitle1">How do I choose colors for AI-generated images?</span>
+          </div>
+          <div class="mock-chat">
+            <div class="mock-bubble user">
+              <span data-i18n="mockBubbleUserBuilder">Translate this to Persian and keep the technical terms.</span>
+            </div>
+            <div class="mock-bubble ai">
+              <span data-i18n="mockBubbleAiBuilder">برای تولید تصویر با هوش مصنوعی، ابتدا حال‌وهوای تصویر را انتخاب کن، بعد یک پالت کوچک از رنگ‌های هماهنگ بساز…</span>
+              <div class="bubble-actions">
+                <span class="mock-dir-btn on"><span data-i18n="mockLtr">LTR</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockRtl">RTL</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockCopyBtn">Copy</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockReplaceBtn">Replace</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockPrependBtn">Prepend</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockInsertBtn">Insert below</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockAppendBtn">Append</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="mock-prompt-tags mt-3">
+            <span class="mock-tag" data-i18n="mockTagSummarize">Summarize</span>
+            <span class="mock-tag" data-i18n="mockTagFa">To Persian</span>
+            <span class="mock-tag" data-i18n="mockTagEn">To English</span>
+            <span class="mock-tag" data-i18n="mockTagAr">To Arabic</span>
+          </div>
+          <div class="mock-input-row">
+            <div class="mock-input" data-i18n="mockAskPlaceholder">Ask a question…</div>
+            <div class="mock-send">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="grid gap-3">
+            <div class="card">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6AskBuilder1T">Four quick prompts</h3>
+              <p class="c-muted text-sm m-0" data-i18n-html="s6AskBuilder1B">Tags above the input field fire instantly: <b>Summarize</b>, <b>To Persian</b>, <b>To English</b>, and <b>To Arabic</b>. They translate or summarize the current block with one click.</p>
+            </div>
+            <div class="card ai">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6AskBuilder2T">Streaming replies with a stop button</h3>
+              <p class="c-muted text-sm m-0" data-i18n="s6AskBuilder2B">Responses appear token-by-token. While the model is writing, a red stop button replaces the send button — click it to abort, and whatever was written so far is kept.</p>
+            </div>
+            <div class="card">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6AskBuilder3T">Write the reply back into your draft</h3>
+              <p class="c-muted text-sm m-0" data-i18n-html="s6AskBuilder3B">Below every AI reply there are four write-back buttons: <b>Replace</b>, <b>Prepend</b>, <b>Insert below</b>, and <b>Append</b>. They put the reply into your draft immediately — replacing the block, adding it before or after, or appending at the end. <b>Replace</b> keeps the block's role; inserted or appended blocks inherit the source role too (see §6 write-back below).</p>
+            </div>
+            <div class="card ai">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6AskBuilder4T">Remembers the conversation</h3>
+              <p class="c-muted text-sm m-0" data-i18n="s6AskBuilder4B">As long as the panel stays open on the same block, follow-up questions keep the full conversation in context.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archive panel -->
+      <h3 class="font-bold mb-3 c-strong flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full" style="background:var(--user)"></span>
+        <span data-i18n="s6ArchiveHeading">Inside a generated archive</span>
+      </h3>
+      <p class="c-muted text-sm mb-4" data-i18n-html="s6ArchiveBody">Every archive you generate carries the same Ollama panel, tucked into its sidebar above the theme, font, and print buttons. It adds a fourth control: <b class="c-strong">Save HTML</b> — because browsers won't let a page silently overwrite itself on disk.</p>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-6">
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-section-title"><span data-i18n="mockOllamaHeading">Ollama Integration</span><span class="line"></span></div>
+          <div class="mock-conn">
+            <span class="lamp ok"></span>
+            <span data-i18n="mockConnected">Connected</span>
+          </div>
+          <div class="mock-select mt-3">
+            <span>gemma4:latest</span>
+            <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="mock-btn mt-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+            <span data-i18n="mockAutoTitle">Auto-title</span>
+          </div>
+          <div class="mock-btn mt-2" style="background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(6,182,212,.12));border-color:rgba(16,185,129,.35);color:#6ee7b7">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+            <span data-i18n="mockSaveHtml">Save HTML</span>
+          </div>
+        </div>
+        <div>
+          <p class="c-muted text-sm" data-i18n-html="s6SaveBody">After clicking <b class="c-strong">Auto-title</b> inside an archive, the new titles are visible right away — but the file on your disk hasn't changed yet. Click <b class="c-strong">Save HTML</b> to write the update back. Your browser will ask you to confirm the filename (the first time) and then overwrite the same file. If saving isn't supported, the archive politely downloads a fresh copy instead.</p>
+          <div class="warn mt-4" data-i18n-html="s6SaveWarning"><strong>Note:</strong> Auto-title alone never writes to disk. You must click <b>Save HTML</b> to keep the changes.</div>
+        </div>
+      </div>
+
+      <!-- Archive AI sidebar with write-back -->
+      <h3 class="font-bold mb-3 c-strong flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full" style="background:var(--ai)"></span>
+        <span data-i18n="s6AskHeading">“Ask AI” in the archive — and the four write-back modes</span>
+      </h3>
+      <p class="c-muted text-sm mb-4" data-i18n-html="s6AskBody">Every message header in a generated archive carries an <b class="c-strong">Ask AI</b> button (a little robot icon). Click it and a resizable panel slides in from the side. The message you clicked is set as the <b class="c-strong">context</b> — the model always knows what you're asking about. And when you get a good answer, you can <b class="c-strong">write it straight into the archive</b>.</p>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-6">
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-context-bar">
+            <b data-i18n="mockContextLabel">Context:</b>
+            <span class="ctx-title" data-i18n="mockBlockTitle2">Hue, saturation, and value — the three dimensions of color</span>
+          </div>
+          <div class="mock-chat">
+            <div class="mock-bubble user">
+              <span data-i18n="mockBubbleUser">Summarize the key idea in one sentence.</span>
+            </div>
+            <div class="mock-bubble ai">
+              <span data-i18n="mockBubbleAi">Every color has three properties — hue, saturation, and value — and a strong image depends on their relationship, not on the number of colors.</span>
+              <div class="bubble-actions">
+                <span class="mock-dir-btn on"><span data-i18n="mockLtr">LTR</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockRtl">RTL</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockCopyBtn">Copy</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockReplaceBtn">Replace</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockPrependBtn">Prepend</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockInsertBtn">Insert below</span></span>
+                <span class="mock-dir-btn"><span data-i18n="mockAppendBtn">Append</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="mock-prompt-tags mt-3">
+            <span class="mock-tag" data-i18n="mockTagSummarize">Summarize</span>
+            <span class="mock-tag" data-i18n="mockTagFa">To Persian</span>
+            <span class="mock-tag" data-i18n="mockTagEn">To English</span>
+            <span class="mock-tag" data-i18n="mockTagAr">To Arabic</span>
+          </div>
+          <div class="mock-input-row">
+            <div class="mock-input" data-i18n="mockAskPlaceholder">Ask a question…</div>
+            <div class="mock-send">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="grid gap-3">
+            <div class="card">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6Write1T">Replace</h3>
+              <p class="c-muted text-sm m-0" data-i18n="s6Write1B">The reply replaces the body of the message you were asking about. The role and title stay.</p>
+            </div>
+            <div class="card ai">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6Write2T">Prepend</h3>
+              <p class="c-muted text-sm m-0" data-i18n="s6Write2B">The reply becomes a new message inserted <b>before</b> the source message. It inherits the source block's role — a reply about a User message is attributed to the User, not flipped to the AI.</p>
+            </div>
+            <div class="card">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6Write3T">Insert below</h3>
+              <p class="c-muted text-sm m-0" data-i18n="s6Write3B">The reply becomes a new message inserted <b>after</b> the source message, again inheriting its role.</p>
+            </div>
+            <div class="card ai">
+              <h3 class="font-bold mb-1 c-strong" data-i18n="s6Write4T">Append</h3>
+              <p class="c-muted text-sm m-0" data-i18n="s6Write4B">The reply becomes a new message at the <b>very end</b> of the thread. Its role alternates from the last message — so a follow-up question after an AI reply lands as a User block.</p>
+            </div>
+          </div>
+          <div class="warn mt-4" data-i18n-html="s6WriteWarning"><strong>Save HTML afterwards.</strong> Write-back changes what you see on screen but does not write to disk. Click <b>Save HTML</b> in the sidebar to keep the change.</div>
+          <div class="tip mt-3" data-i18n-html="s6WriteDeleteTip"><strong>Deleting an added block:</strong> messages added by write-back carry a small <b>×</b> button in their header. Clicking it removes just that message — the original conversation is never touched.</div>
+        </div>
+      </div>
+
+      <!-- Other sidebar features -->
+      <h3 class="font-bold mb-3 c-strong flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full" style="background:var(--user)"></span>
+        <span data-i18n="s6AskOtherHeading">Other sidebar details</span>
+      </h3>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s6Ask1T">Four quick prompts</h3><p class="c-muted text-sm m-0" data-i18n-html="s6Ask1B">Tags above the input field fire instantly: <b>Summarize</b>, <b>To Persian</b>, <b>To English</b>, and <b>To Arabic</b>. They translate or summarize the current message with one click.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s6Ask2T">Streaming replies</h3><p class="c-muted text-sm m-0" data-i18n="s6Ask2B">Responses appear token-by-token as the model writes them — you can start reading before it finishes, and stop it at any time.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s6Ask3T">Per-reply direction controls</h3><p class="c-muted text-sm m-0" data-i18n-html="s6Ask3B">Below every AI reply, small buttons let you force the reply to render <b>LTR</b> or <b>RTL</b> — perfect for mixed-language conversations — and copy the reply to your clipboard.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s6Ask4T">Remembers the conversation</h3><p class="c-muted text-sm m-0" data-i18n="s6Ask4B">As long as the sidebar stays open on the same message, follow-up questions keep the full conversation in context.</p></div>
+      </div>
+    </section>
+
+    <!-- 07 — Preview & download -->
+    <section class="section reveal mb-16" id="s7">
+      <div class="section-head">
+        <span class="num-pill">07</span>
+        <h2 data-i18n="s7Title">Preview &amp; download</h2>
+      </div>
+      <p class="section-sub" data-i18n="s7Sub">Once your blocks look right, generate the archive and choose how to save it.</p>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-5">
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-generate">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8z"/></svg>
+            <span data-i18n="mockGenerateLabel">Generate Archive</span>
+          </div>
+          <div class="mock-stats">
+            <div class="mock-stat"><b>4</b><span data-i18n="mockStatBlocks">Blocks</span></div>
+            <div class="mock-stat"><b>168</b><span data-i18n="mockStatWords">Words</span></div>
+            <div class="mock-stat"><b>2</b><span data-i18n="mockStatCode">Code</span></div>
+          </div>
+        </div>
+        <div class="mock-wrap" data-badge="Example" data-i18n-attr="data-badge:mockBadge">
+          <div class="mock-toolbar">
+            <span class="dot"></span>
+            <span class="c-strong" data-i18n="mockPreviewTitle">Archive preview</span>
+            <span class="c-muted" style="font-weight:500">· 42 KB</span>
+            <span class="spacer"></span>
+            <span class="mock-tb primary" data-i18n="mockDownload">Download .html</span>
+            <span class="mock-tb ghost" data-i18n="mockOpenTab">Open in new tab</span>
+            <span class="mock-tb ghost" data-i18n="mockCopyHtml">Copy HTML</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s7c1T">Generate Archive</h3><p class="c-muted text-sm m-0" data-i18n="s7c1B">Opens a live preview in a modal. Nothing is saved to disk until you choose to download.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s7c2T">Download .html</h3><p class="c-muted text-sm m-0" data-i18n="s7c2B">Saves the entire archive — styles, scripts, and content — as a single self-contained file. The name is derived from your title and today's date.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s7c3T">Open in new tab</h3><p class="c-muted text-sm m-0" data-i18n="s7c3B">Opens the archive in a fresh browser tab so you can test it exactly as a reader would see it.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s7c4T">Copy HTML</h3><p class="c-muted text-sm m-0" data-i18n="s7c4B">Copies the full source of the archive to your clipboard — useful for pasting into a CMS or a static site.</p></div>
+      </div>
+
+      <div class="tip mt-4" data-i18n-html="s7Tip"><strong>Preview is live:</strong> anything you do inside the preview — auto-titling, Ask-AI write-back, deleting an added block — is picked up automatically when you download, open in a new tab, or copy the HTML. You never lose preview edits.</div>
+    </section>
+
+    <!-- 08 — Markdown export -->
+    <section class="section reveal mb-16" id="s8">
+      <div class="section-head">
+        <span class="num-pill">08</span>
+        <h2 data-i18n="s8Title">Markdown export</h2>
+      </div>
+      <p class="section-sub" data-i18n-html="s8Sub">Alongside the HTML archive, the same conversation can be exported as a plain <b class="c-strong">Markdown</b> (<code class="inline-code">.md</code>) file — perfect for pasting into Notion, Obsidian, GitHub, or any note-taking app. There are two places to trigger it, and they produce the same format.</p>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-6">
+        <div class="mock-wrap" data-badge="In the builder" data-i18n-attr="data-badge:mockBadgeBuilder">
+          <div class="mock-generate">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+            <span data-i18n="mockGenerateLabel">Generate Archive</span>
+          </div>
+          <div class="mock-btn md-btn mt-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+            <span data-i18n="mockMdBtnLabel">Export as Markdown</span>
+          </div>
+        </div>
+        <div class="mock-wrap" data-badge="In the archive" data-i18n-attr="data-badge:mockBadgeArchive">
+          <div class="mock-toolbar" style="justify-content:center;gap:6px">
+            <span class="mock-tb ghost">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span data-i18n="mockPrintBtn">Print</span>
+            </span>
+            <span class="mock-tb md">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              <span data-i18n="mockMdShort">Markdown</span>
+            </span>
+          </div>
+          <p class="c-muted text-xs text-center mt-3 m-0" data-i18n-html="mockMdHint">Or press <span class="kbd">m</span> anywhere in the archive</p>
+        </div>
+      </div>
+
+      <h3 class="font-bold mb-3 c-strong" data-i18n="s8OutputTitle">What the file looks like</h3>
+      <div class="mock-md-output mb-5">
+<span class="md-h1"># The Art of Color in AI Imagery</span>
+
+<span class="md-b">**User:**</span> Eitaa.com/AIDEEP  
+<span class="md-b">**Created:**</span> <span class="md-empty">(blank)</span>  
+<span class="md-b">**Updated:**</span> <span class="md-empty">(blank)</span>  
+<span class="md-b">**Exported:**</span> September 28, 2026  
+<span class="md-b">**Link:**</span> <span class="md-empty">(blank)</span>  
+
+<span class="md-h2">## Prompt:</span>
+
+I love generating images with AI, but I have no idea how to pick colors that work well together…
+
+<span class="md-h2">## Response:</span>
+
+Every color has three properties: hue, saturation, and value. A compelling image rarely needs many colors…
+
+<span class="md-hr">---</span>
+
+Powered by <span class="md-b">[AIDEEP Chat Exporter](https://www.eitaa.com/AIDEEP)</span>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s8c1T">Filename</h3><p class="c-muted text-sm m-0" data-i18n-html="s8c1B">Saved as <code class="inline-code">{title-slug}-{YYYY-MM-DD}.md</code>. If your title is empty, the slug is <code class="inline-code">conversation-archive</code>.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s8c2T">Labels are always English</h3><p class="c-muted text-sm m-0" data-i18n-html="s8c2B">Even if you're using the Persian UI, structural labels like <code class="inline-code">**User:**</code> and <code class="inline-code">## Response:</code> stay in English so the file works with any tool. Only your <b>body text</b> preserves the original language.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s8c3T">Some fields are intentionally blank</h3><p class="c-muted text-sm m-0" data-i18n-html="s8c3B"><code class="inline-code">Created:</code>, <code class="inline-code">Updated:</code>, and <code class="inline-code">Link:</code> are placeholder labels with empty values. The archiver doesn't track those. They're not bugs — they simply keep the file compatible with other exporters.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s8c4T">Empty-block guard</h3><p class="c-muted text-sm m-0" data-i18n="s8c4B">In the builder, the button does nothing useful if every block is empty — you'll see a friendly toast asking you to add some text first.</p></div>
+      </div>
+    </section>
+
+    <!-- 09 — Drafts & import -->
+    <section class="section reveal mb-16" id="s9">
+      <div class="section-head">
+        <span class="num-pill">09</span>
+        <h2 data-i18n="s9Title">Drafts, undo &amp; import</h2>
+      </div>
+      <p class="section-sub" data-i18n="s9Sub">Your work is autosaved in the browser, you can undo and redo structural changes, and you can move drafts between devices with JSON.</p>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c1T">Autosave — per language</h3><p class="c-muted text-sm m-0" data-i18n="s9c1B">Every change to your archive is saved to this browser's local storage. Each interface language keeps its own draft, so switching between EN and FA never overwrites what you were working on. If a draft grows too large for plain storage, the archiver automatically compresses it before giving up.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c2T">Undo / Redo</h3><p class="c-muted text-sm m-0" data-i18n-html="s9c2B">Buttons at the top of the Project panel undo or redo <b>structural</b> changes — adding, deleting, moving, or inserting a block. Typing inside a field uses your browser's own undo, so the two never fight. Shortcuts: <span class="kbd">Ctrl+Z</span> / <span class="kbd">Ctrl+Y</span>.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c3T">Export draft as JSON</h3><p class="c-muted text-sm m-0" data-i18n="s9c3B">Downloads a small JSON file containing the title, subtitle, names, and every block. Perfect for backups or sharing a template.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c4T">Import</h3><p class="c-muted text-sm m-0" data-i18n-html="s9c4B">Accepts either a draft <code class="inline-code">.json</code> file or a previously generated <code class="inline-code">.html</code> archive. The data is read straight from the file — no re-typing needed. If the imported archive was made in a different language than your interface, you'll see a note explaining that the output will follow your current interface.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c5T">Load sample / Clear all</h3><p class="c-muted text-sm m-0" data-i18n="s9c5B">Load a small sample conversation to explore the tool, or clear everything and start from a blank draft.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c6T">Reset all local data</h3><p class="c-muted text-sm m-0" data-i18n="s9c6B">The nuclear option. Wipes every AIDEEP key stored in this browser — both language drafts, settings, and the saved Ollama model — and reloads. Use this if you want a completely fresh start.</p></div>
+      </div>
+    </section>
+
+    <!-- 10 — Inside the archive -->
+    <section class="section reveal mb-16" id="s10">
+      <div class="section-head">
+        <span class="num-pill">10</span>
+        <h2 data-i18n="s10Title">Inside the generated archive</h2>
+      </div>
+      <p class="section-sub" data-i18n="s10Sub">Every archive you produce ships with the same reading experience — plus the optional Ollama panel and Ask AI sidebar if you connected a model.</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h16"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c1T">Sidebar table of contents</h3><p class="c-muted text-sm m-0" data-i18n="s10c1B">Sticky on the left (or right in RTL) with the active block highlighted as you scroll. Click any entry to jump straight to that message — it works in the preview and in the saved file alike.</p></div>
+        <div class="card ai"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c2T">Live search</h3><p class="c-muted text-sm m-0" data-i18n-html="s10c2B">Filter the table of contents by typing. Press <span class="kbd">/</span> to jump straight to the search box.</p></div>
+        <div class="card"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c3T">Dark &amp; light themes</h3><p class="c-muted text-sm m-0" data-i18n-html="s10c3B">Automatically follows your system, and remembers your choice. Press <span class="kbd">t</span> to toggle.</p></div>
+        <div class="card ai"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c4T">One-click copy</h3><p class="c-muted text-sm m-0" data-i18n="s10c4B">Copy a whole message, its permalink, or any single code block. Each has its own copy button.</p></div>
+        <div class="card"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c5T">Collapsible messages</h3><p class="c-muted text-sm m-0" data-i18n="s10c5B">Collapse any message to its header, or collapse them all at once from the sidebar.</p></div>
+        <div class="card ai"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c6T">Print &amp; Markdown</h3><p class="c-muted text-sm m-0" data-i18n-html="s10c6B">Two extra buttons in the sidebar: a <b>Print</b> pill for a clean paper layout, and a <b>Markdown</b> pill that exports the conversation as <code class="inline-code">.md</code>.</p></div>
+        <div class="card"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4zM4 14h16v6H4z"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c7T">Reading progress</h3><p class="c-muted text-sm m-0" data-i18n="s10c7B">A thin gradient bar at the top shows how far the reader has scrolled through the conversation.</p></div>
+        <div class="card ai"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c8T">Ollama sidebar panel</h3><p class="c-muted text-sm m-0" data-i18n="s10c8B">Connect to a local AI, re-title the archive after the fact, and save the result back to disk.</p></div>
+        <div class="card"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M12 8V4M8 4h8"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c9T">Ask AI per message — with write-back</h3><p class="c-muted text-sm m-0" data-i18n="s10c9B">Click the robot icon on any message to open a resizable chat panel. Ask questions, summarize, or translate — then push the answer back into the archive with Replace, Prepend, Insert, or Append.</p></div>
+        <div class="card ai"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6M12 19h8"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c10T">Code-block direction controls</h3><p class="c-muted text-sm m-0" data-i18n="s10c10B">Every code block has LTR and RTL buttons in its header to force the reading direction. A small Aa button switches between monospace and Vazirmatn for text/plaintext blocks. Your choices stick across edits in the same session.</p></div>
+        <div class="card"><div class="feat-icon mb-3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div><h3 class="font-bold mb-1 c-strong" data-i18n="s10c11T">HTML preview</h3><p class="c-muted text-sm m-0" data-i18n="s10c11B">Code blocks with the language <code class="inline-code">html</code> get a Preview button. One click renders the HTML in a sandboxed frame below the code, so you can see exactly what it produces without leaving the page.</p></div>
+      </div>
+
+      <div class="tip mt-4" data-i18n-html="s10Tip"><strong>Archive language is independent of the interface.</strong> You can use the manual in Persian and build an English archive — or vice versa. Pick the output language in the builder before generating, and the resulting file carries its own language and direction everywhere.</div>
+    </section>
+
+    <!-- 11 — Shortcuts -->
+    <section class="section reveal mb-16" id="s11">
+      <div class="section-head">
+        <span class="num-pill">11</span>
+        <h2 data-i18n="s11Title">Keyboard shortcuts</h2>
+      </div>
+      <p class="section-sub" data-i18n="s11Sub">A few keys to move faster while building and reading.</p>
+
+      <h3 class="font-bold mt-6 mb-3 flex items-center gap-2 c-strong">
+        <span class="w-2 h-2 rounded-full" style="background:var(--user)"></span>
+        <span data-i18n="s11Builder">In the builder</span>
+      </h3>
+      <table class="shortcut-table">
+        <tbody>
+          <tr><td data-i18n="s11b1">Add a new block</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span></td></tr>
+          <tr><td data-i18n="s11b2">Undo the last structural change</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Z</span></td></tr>
+          <tr><td data-i18n="s11b3">Redo</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Y</span></td></tr>
+          <tr><td data-i18n="s11b4">Close the preview modal or the Ask-AI panel</td><td><span class="kbd">Esc</span></td></tr>
+          <tr><td data-i18n="s11b5">Insert two spaces (in the text area)</td><td><span class="kbd">Tab</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="font-bold mt-6 mb-3 flex items-center gap-2 c-strong">
+        <span class="w-2 h-2 rounded-full" style="background:var(--ai)"></span>
+        <span data-i18n="s11Archive">Inside the generated archive</span>
+      </h3>
+      <table class="shortcut-table">
+        <tbody>
+          <tr><td data-i18n="s11a1">Show / hide the sidebar</td><td><span class="kbd">[</span> or <span class="kbd">]</span></td></tr>
+          <tr><td data-i18n="s11a2">Jump to the search box</td><td><span class="kbd">/</span></td></tr>
+          <tr><td data-i18n="s11a3">Toggle dark / light theme</td><td><span class="kbd">t</span></td></tr>
+          <tr><td data-i18n="s11a4">Export as Markdown</td><td><span class="kbd">m</span></td></tr>
+          <tr><td data-i18n="s11a5">Go to the next / previous message</td><td><span class="kbd">j</span> / <span class="kbd">k</span></td></tr>
+          <tr><td data-i18n="s11a6">Close the sidebar or blur the search box</td><td><span class="kbd">Esc</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 12 — Tips -->
+    <section class="section reveal mb-16" id="s12">
+      <div class="section-head">
+        <span class="num-pill">12</span>
+        <h2 data-i18n="s12Title">Tips &amp; best practice</h2>
+      </div>
+      <div class="grid gap-3">
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c1T">Give every block a title — or let the AI do it</h3><p class="c-muted text-sm m-0" data-i18n="s12c1B">Titles turn the table of contents into a real navigation aid. If you have Ollama connected, one click will title everything for you in the correct language.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c2T">One AI turn per block</h3><p class="c-muted text-sm m-0" data-i18n="s12c2B">If the AI sent several messages, split them into separate blocks. Readers can collapse what they don't need.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c3T">Wrap code in fences</h3><p class="c-muted text-sm m-0" data-i18n-html="s12c3B">Even a single line of code benefits from <code class="inline-code">```</code> fences — it gets syntax-appropriate styling, its own copy button, and LTR/RTL controls. Use <code class="inline-code">```html</code> to unlock the live Preview toggle.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c4T">Back up important drafts</h3><p class="c-muted text-sm m-0" data-i18n="s12c4B">Autosave lives in this browser only. For archives you care about, export the JSON draft as well as the final HTML (and the .md if you want both formats).</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c5T">Save HTML after auto-titling in an archive</h3><p class="c-muted text-sm m-0" data-i18n="s12c5B">Re-titling an existing archive won't write to disk by itself. Click Save HTML to persist the change.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c6T">Write back from Ask AI, then Save HTML</h3><p class="c-muted text-sm m-0" data-i18n="s12c6B">The four write-back buttons in the AI sidebar change what you see but don't save the file. When you're happy with the result, click Save HTML to write it to disk.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c7T">Use LTR/RTL buttons for mixed-language replies</h3><p class="c-muted text-sm m-0" data-i18n="s12c7B">If you have a Persian archive and get an English AI reply (or vice versa), click the LTR or RTL button under the reply to force the correct direction. The same applies to code blocks with mixed scripts.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c8T">Share the .html file directly</h3><p class="c-muted text-sm m-0" data-i18n="s12c8B">The archive is fully self-contained — email it, drop it in a chat, or upload it to any static host. No folder of assets required.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s12c9T">Paste the .md into your notes app</h3><p class="c-muted text-sm m-0" data-i18n="s12c9B">The Markdown export is deliberately clean — no HTML tags, no extra styling — so it looks right in Notion, Obsidian, Bear, GitHub, or anywhere else.</p></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <p data-i18n-html="footerLine">Crafted with care — <a href="https://eitaa.com/AIDEEP" target="_blank" rel="noopener">By AIDEEP</a></p>
+</footer>
+
+<div id="toast" class="app-toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================
+   i18n
+   ========================================================= */
+const I18N = {
+  en: {
+    docTitle: 'AIDEEP Conversation Archiver — User Manual',
+    bismillah: 'In the name of God',
+    themeToggleTip: 'Toggle theme',
+    brandName: 'Conversation Archiver',
+    brandTag: 'User Manual · v2.8',
+    byBrand: 'By AIDEEP',
+    tocTitle: 'On this page',
+    toc1: 'What is it?', toc2: 'Quick start', toc3: 'Your workspace',
+    toc4: 'Building blocks', toc5: 'Formatting text', toc6: 'Ollama integration',
+    toc7: 'Preview & download', toc8: 'Markdown export', toc9: 'Drafts & import',
+    toc10: 'Inside the archive', toc11: 'Keyboard shortcuts', toc12: 'Tips & best practice',
+
+    heroBadge: 'User Manual · v2.8',
+    heroTitle: 'Master the Conversation Archiver',
+    heroSub: 'Turn any raw AI conversation into a polished, self-contained HTML archive — with optional local-AI auto-titling, an Ask-AI assistant in both the builder and the archive, code-block direction controls, an HTML preview, per-language drafts, and one-click Markdown export. This manual includes live examples of every screen.',
+    chip1: 'Self-contained .html', chip2: 'Bilingual archives', chip3: 'Markdown export', chip4: 'Ollama ready',
+
+    s1Title: 'What is the Conversation Archiver?',
+    s1Body: 'A tiny browser tool that takes the plain text you copy from any AI chat — <b class="c-strong">ChatGPT, Claude, Gemini, DeepSeek,</b> or anything else — and packages it into a beautiful, <b class="c-strong">self-contained HTML archive</b>. The result is a single <code class="inline-code">.html</code> file you can open in any browser, share over email or messaging apps, print, or keep as a long-term record. You can also export the same conversation as a clean <b class="c-strong">Markdown</b> file, and — optionally — use a local AI to auto-title everything and answer follow-up questions inside the archive.',
+    s1c1T: 'Offline & private', s1c1B: 'Nothing is uploaded anywhere. Everything — from pasting to previewing to downloading — happens in your own browser.',
+    s1c2T: 'Zero dependencies', s1c2B: 'The generated file has no external links, no fonts to load, no scripts to fetch. It works offline, forever.',
+    s1c3T: 'Beautiful by default', s1c3B: 'Table of contents, live search, dark and light themes, one-click copy buttons, collapsible messages, code-direction controls, and a print-friendly layout.',
+    s1c4T: 'Optional local AI', s1c4B: 'Connect to Ollama on your own machine to auto-title every block and ask the archive follow-up questions — no cloud, no cost.',
+
+    s2Title: 'Quick start',
+    s2Sub: 'From a blank page to a downloadable archive in four steps. Each step shows a real example of what you\'ll see.',
+    s2s1T: 'Fill in the archive details',
+    s2s1B: 'Give your archive a title, an optional subtitle, the display names you want shown for the User and the AI, and pick the output language (English or Persian). These appear in the final archive header and browser tab.',
+    s2s2T: 'Add your conversation blocks',
+    s2s2B: 'Click <b class="c-strong">“Add another block”</b> to create a new message. For each block, pick whether it is a <b class="c-user">User</b> message or an <b class="c-ai">AI</b> response — this changes its accent color in the archive.',
+    s2s3T: 'Paste your text',
+    s2s3B: 'Copy a message from your AI chat and paste it into the block\'s text area. Optionally give the block a short title — that title will be used in the archive\'s table of contents.',
+    s2s4T: 'Generate & download',
+    s2s4B: 'Click <b class="c-strong">“Generate Archive”</b> to preview it instantly, then click <b class="c-strong">“Download .html”</b> to save the file. You can also click <b class="c-strong">“Export as Markdown”</b> any time to get the same conversation as a <code class="inline-code">.md</code> file.',
+
+    s3Title: 'Your workspace',
+    s3Sub: 'The interface is split into two columns. Everything you need lives in one of them.',
+    s3LeftT: 'Left column — content',
+    s3Left1: 'Archive title, subtitle, and display names',
+    s3Left2: 'The archive-language selector (English or Persian output)',
+    s3Left3: 'The list of conversation blocks',
+    s3Left4: 'The “Add another block” button at the bottom',
+    s3RightT: 'Right column — actions',
+    s3Right1: 'The “Generate Archive” button, plus “Export as Markdown,” and quick stats',
+    s3Right2: 'The Project menu: Undo/Redo, Import, Export JSON, Load sample, Clear all, Reset all local data',
+    s3Right3: 'The Ollama Integration panel (optional local AI)',
+    s3Right4: 'A short formatting cheat sheet you can refer back to',
+
+    s4Title: 'Building blocks',
+    s4Sub: 'Every message in your archive is one block. Here are two filled-in examples — a User message and an AI response.',
+    s4c1T: 'Role selector', s4c1B: 'Choose 👤 User or 🤖 AI. The label, color, and icon in the archive change accordingly.',
+    s4c2T: 'Block title', s4c2B: 'Optional. Shown in the table of contents and above the message. If you skip it, an automatic “Message N” is used — unless you have Ollama auto-title it for you.',
+    s4c3T: 'Message body', s4c3B: 'Paste the raw text you copied from your AI chat. Formatting is preserved and enhanced — see the next section.',
+    s4c4T: 'Block actions', s4c4B: 'Reorder with <b>↑</b> and <b>↓</b>, insert a fresh block below with <b>+</b>, ask the AI about this block with the robot icon, or delete with the trash icon. Empty blocks can be deleted without a confirmation.',
+    s4Tip: '<strong>Tip:</strong> keep one AI turn per block. Smaller blocks produce a cleaner table of contents and a more readable archive.',
+    s4moveUp: 'Move up', s4moveDown: 'Move down', s4insertAfter: 'Insert block below', s4deleteBlock: 'Delete block',
+
+    s5Title: 'Formatting your text',
+    s5Sub: 'You don\'t need to know markdown. Paste as-is, and the archive turns these patterns into clean, styled elements.',
+    s5f1: 'A code block — with its own language label, a copy button, and LTR/RTL/Aa controls.',
+    s5f2: 'Inline code — great for function names, filenames, and commands.',
+    s5f3: 'Renders as <b class="c-strong">bold</b> text for emphasis.',
+    s5f4: 'Bulleted list. Consecutive lines starting with <code class="inline-code">-</code> or <code class="inline-code">*</code> become one list.',
+    s5f5: 'Numbered list. Works with both Latin and Persian digits.',
+    s5f6: 'A section heading. One or two <code class="inline-code">#</code> marks produce a larger heading.',
+    s5f7: 'A blockquote with an accent border — useful for callouts and quotes.',
+    s5f8: 'A horizontal divider between sections.',
+    s5f9: 'A table. Add a <code class="inline-code">| --- | --- |</code> row under the header to activate it.',
+    s5f10: 'Links are detected automatically and rendered as clickable URLs.',
+    s5f11Key: 'blank line', s5f11: 'A blank line starts a new paragraph.',
+
+    /* ===== 06 Ollama ===== */
+    s6Title: 'Ollama integration — optional local AI',
+    s6Sub: 'Connect the archiver to <b class="c-strong">Ollama</b> — a free app that runs AI models on your own computer — and it can <b class="c-strong">auto-title every block</b> for you, and even answer follow-up questions right inside the builder <b>and</b> the generated archive. Ollama is entirely optional; everything else works without it. This section shows you how to set it up and use it.',
+    s6SetupTitle: 'Setting up Ollama (one-time, ~5 minutes)',
+    s6Setup1T: 'Install Ollama',
+    s6Setup1B: 'Download the free app from <b class="c-strong">ollama.com</b> and install it. It runs quietly in the background and hosts local AI models.',
+    s6Setup2T: 'Start it with the browser-friendly setting',
+    s6Setup2B: 'Open a terminal / command prompt and run the command for your system. This tells Ollama to accept requests from your browser.',
+    s6Windows: 'Windows', s6MacLinux: 'macOS / Linux',
+    s6Setup3T: 'Pull at least one model',
+    s6Setup3B: 'In another terminal, download a model, for example: <code class="mono">ollama pull gemma4</code>. Any model works — smaller models respond faster, larger ones are smarter.',
+    s6Setup4T: 'Click “Connect to Ollama” in the archiver',
+    s6Setup4B: 'Back in the archiver, open the Ollama Integration panel and click the connect button. When the lamp turns green, you\'re in.',
+    s6Cors: '<strong>Red lamp?</strong> That almost always means Ollama wasn\'t started with the <code class="mono">OLLAMA_ORIGINS=*</code> setting from step 2. Close it, run the command again, and retry.',
+    s6BuilderHeading: 'On the builder page',
+    s6BuilderBody: 'The <b class="c-strong">Ollama Integration</b> panel sits in the right column, between the <b class="c-strong">Project</b> menu and the <b class="c-strong">Formatting tips</b> card. It has three controls: a connect button with a status lamp, a model dropdown (populated from your installed Ollama models), and an Auto-title button.',
+    s6LampTip: '<strong>Lamp states:</strong> white = not tried yet, yellow = connecting, <b style="color:#10b981">green</b> = connected, <b style="color:#ef4444">red</b> = failed.',
+    s6AutoTitleHeading: 'What “Auto-title” does',
+    s6AT1T: 'Fills only empty fields',
+    s6AT1B: 'Anything you typed yourself is left exactly as-is. The model only fills in titles and archive details that are blank.',
+    s6AT2T: 'Matches the source language',
+    s6AT2B: 'English conversations get English titles. Persian conversations get Persian titles. And so on — the model is instructed to keep the language natural.',
+    s6AT3T: 'Order of operations',
+    s6AT3B: 'Every untitled block is titled one-by-one, in order. Then the <b class="c-strong">Archive title</b> and <b class="c-strong">Subtitle</b> are generated from the first user message and the first AI message — wherever they appear in the thread, so reordering or inserting blocks never breaks it.',
+    s6AT4T: 'Safe fallback',
+    s6AT4B: 'If the model returns nothing useful for a block, a short snippet from the message text is used instead — you never end up with an empty title.',
+    s6AskBuilderHeading: '“Ask AI” in the builder — per-block assistant',
+    s6AskBuilderBody: 'Every block in the builder carries an <b class="c-strong">Ask AI</b> button (a robot icon, next to the drag handle). Click it and an assistant panel slides in — on the <b>left</b> in English, on the <b>right</b> in Persian. The block you clicked is set as the <b class="c-strong">context</b>, so the model always knows what you\'re asking about. You can ask it to summarize, translate, rewrite, explain, or answer anything — and then <b class="c-strong">write the reply straight back into your draft</b>.',
+    s6AskBuilder1T: 'Four quick prompts',
+    s6AskBuilder1B: 'Tags above the input field fire instantly: <b>Summarize</b>, <b>To Persian</b>, <b>To English</b>, and <b>To Arabic</b>. They translate or summarize the current block with one click.',
+    s6AskBuilder2T: 'Streaming replies with a stop button',
+    s6AskBuilder2B: 'Responses appear token-by-token. While the model is writing, a red stop button replaces the send button — click it to abort, and whatever was written so far is kept.',
+    s6AskBuilder3T: 'Write the reply back into your draft',
+    s6AskBuilder3B: 'Below every AI reply there are four write-back buttons: <b>Replace</b>, <b>Prepend</b>, <b>Insert below</b>, and <b>Append</b>. They put the reply into your draft immediately — replacing the block, adding it before or after, or appending at the end. <b>Replace</b> keeps the block\'s role; inserted or appended blocks inherit the source role too (see §6 write-back below).',
+    s6AskBuilder4T: 'Remembers the conversation',
+    s6AskBuilder4B: 'As long as the panel stays open on the same block, follow-up questions keep the full conversation in context.',
+    s6ArchiveHeading: 'Inside a generated archive',
+    s6ArchiveBody: 'Every archive you generate carries the same Ollama panel, tucked into its sidebar above the theme, font, and print buttons. It adds a fourth control: <b class="c-strong">Save HTML</b> — because browsers won\'t let a page silently overwrite itself on disk.',
+    s6SaveBody: 'After clicking <b class="c-strong">Auto-title</b> inside an archive, the new titles are visible right away — but the file on your disk hasn\'t changed yet. Click <b class="c-strong">Save HTML</b> to write the update back. Your browser will ask you to confirm the filename (the first time) and then overwrite the same file. If saving isn\'t supported, the archive politely downloads a fresh copy instead.',
+    s6SaveWarning: '<strong>Note:</strong> Auto-title alone never writes to disk. You must click <b>Save HTML</b> to keep the changes.',
+    s6AskHeading: '“Ask AI” in the archive — and the four write-back modes',
+    s6AskBody: 'Every message header in a generated archive carries an <b class="c-strong">Ask AI</b> button (a little robot icon). Click it and a resizable panel slides in from the side. The message you clicked is set as the <b class="c-strong">context</b> — the model always knows what you\'re asking about. And when you get a good answer, you can <b class="c-strong">write it straight into the archive</b>.',
+    s6Write1T: 'Replace',
+    s6Write1B: 'The reply replaces the body of the message you were asking about. The role and title stay.',
+    s6Write2T: 'Prepend',
+    s6Write2B: 'The reply becomes a new message inserted <b>before</b> the source message. It inherits the source block\'s role — a reply about a User message is attributed to the User, not flipped to the AI.',
+    s6Write3T: 'Insert below',
+    s6Write3B: 'The reply becomes a new message inserted <b>after</b> the source message, again inheriting its role.',
+    s6Write4T: 'Append',
+    s6Write4B: 'The reply becomes a new message at the <b>very end</b> of the thread. Its role alternates from the last message — so a follow-up question after an AI reply lands as a User block.',
+    s6WriteWarning: '<strong>Save HTML afterwards.</strong> Write-back changes what you see on screen but does not write to disk. Click <b>Save HTML</b> in the sidebar to keep the change.',
+    s6WriteDeleteTip: '<strong>Deleting an added block:</strong> messages added by write-back carry a small <b>×</b> button in their header. Clicking it removes just that message — the original conversation is never touched.',
+    s6AskOtherHeading: 'Other sidebar details',
+    s6Ask1T: 'Four quick prompts',
+    s6Ask1B: 'Tags above the input field fire instantly: <b>Summarize</b>, <b>To Persian</b>, <b>To English</b>, and <b>To Arabic</b>. They translate or summarize the current message with one click.',
+    s6Ask2T: 'Streaming replies',
+    s6Ask2B: 'Responses appear token-by-token as the model writes them — you can start reading before it finishes, and stop it at any time.',
+    s6Ask3T: 'Per-reply direction controls',
+    s6Ask3B: 'Below every AI reply, small buttons let you force the reply to render <b>LTR</b> or <b>RTL</b> — perfect for mixed-language conversations — and copy the reply to your clipboard.',
+    s6Ask4T: 'Remembers the conversation',
+    s6Ask4B: 'As long as the sidebar stays open on the same message, follow-up questions keep the full conversation in context.',
+
+    /* ===== 07 Preview ===== */
+    s7Title: 'Preview & download',
+    s7Sub: 'Once your blocks look right, generate the archive and choose how to save it.',
+    s7c1T: 'Generate Archive', s7c1B: 'Opens a live preview in a modal. Nothing is saved to disk until you choose to download.',
+    s7c2T: 'Download .html', s7c2B: 'Saves the entire archive — styles, scripts, and content — as a single self-contained file. The name is derived from your title and today\'s date.',
+    s7c3T: 'Open in new tab', s7c3B: 'Opens the archive in a fresh browser tab so you can test it exactly as a reader would see it.',
+    s7c4T: 'Copy HTML', s7c4B: 'Copies the full source of the archive to your clipboard — useful for pasting into a CMS or a static site.',
+    s7Tip: '<strong>Preview is live:</strong> anything you do inside the preview — auto-titling, Ask-AI write-back, deleting an added block — is picked up automatically when you download, open in a new tab, or copy the HTML. You never lose preview edits.',
+
+    /* ===== 08 Markdown ===== */
+    s8Title: 'Markdown export',
+    s8Sub: 'Alongside the HTML archive, the same conversation can be exported as a plain <b class="c-strong">Markdown</b> (<code class="inline-code">.md</code>) file — perfect for pasting into Notion, Obsidian, GitHub, or any note-taking app. There are two places to trigger it, and they produce the same format.',
+    s8OutputTitle: 'What the file looks like',
+    s8c1T: 'Filename',
+    s8c1B: 'Saved as <code class="inline-code">{title-slug}-{YYYY-MM-DD}.md</code>. If your title is empty, the slug is <code class="inline-code">conversation-archive</code>.',
+    s8c2T: 'Labels are always English',
+    s8c2B: 'Even if you\'re using the Persian UI, structural labels like <code class="inline-code">**User:**</code> and <code class="inline-code">## Response:</code> stay in English so the file works with any tool. Only your <b>body text</b> preserves the original language.',
+    s8c3T: 'Some fields are intentionally blank',
+    s8c3B: '<code class="inline-code">Created:</code>, <code class="inline-code">Updated:</code>, and <code class="inline-code">Link:</code> are placeholder labels with empty values. The archiver doesn\'t track those. They\'re not bugs — they simply keep the file compatible with other exporters.',
+    s8c4T: 'Empty-block guard',
+    s8c4B: 'In the builder, the button does nothing useful if every block is empty — you\'ll see a friendly toast asking you to add some text first.',
+
+    /* ===== 09 Drafts ===== */
+    s9Title: 'Drafts, undo & import',
+    s9Sub: 'Your work is autosaved in the browser, you can undo and redo structural changes, and you can move drafts between devices with JSON.',
+    s9c1T: 'Autosave — per language', s9c1B: 'Every change to your archive is saved to this browser\'s local storage. Each interface language keeps its own draft, so switching between EN and FA never overwrites what you were working on. If a draft grows too large for plain storage, the archiver automatically compresses it before giving up.',
+    s9c2T: 'Undo / Redo', s9c2B: 'Buttons at the top of the Project panel undo or redo <b>structural</b> changes — adding, deleting, moving, or inserting a block. Typing inside a field uses your browser\'s own undo, so the two never fight. Shortcuts: <span class="kbd">Ctrl+Z</span> / <span class="kbd">Ctrl+Y</span>.',
+    s9c3T: 'Export draft as JSON', s9c3B: 'Downloads a small JSON file containing the title, subtitle, names, and every block. Perfect for backups or sharing a template.',
+    s9c4T: 'Import', s9c4B: 'Accepts either a draft <code class="inline-code">.json</code> file or a previously generated <code class="inline-code">.html</code> archive. The data is read straight from the file — no re-typing needed. If the imported archive was made in a different language than your interface, you\'ll see a note explaining that the output will follow your current interface.',
+    s9c5T: 'Load sample / Clear all', s9c5B: 'Load a small sample conversation to explore the tool, or clear everything and start from a blank draft.',
+    s9c6T: 'Reset all local data', s9c6B: 'The nuclear option. Wipes every AIDEEP key stored in this browser — both language drafts, settings, and the saved Ollama model — and reloads. Use this if you want a completely fresh start.',
+
+    /* ===== 10 Archive ===== */
+    s10Title: 'Inside the generated archive',
+    s10Sub: 'Every archive you produce ships with the same reading experience — plus the optional Ollama panel and Ask AI sidebar if you connected a model.',
+    s10c1T: 'Sidebar table of contents', s10c1B: 'Sticky on the left (or right in RTL) with the active block highlighted as you scroll. Click any entry to jump straight to that message — it works in the preview and in the saved file alike.',
+    s10c2T: 'Live search', s10c2B: 'Filter the table of contents by typing. Press <span class="kbd">/</span> to jump straight to the search box.',
+    s10c3T: 'Dark & light themes', s10c3B: 'Automatically follows your system, and remembers your choice. Press <span class="kbd">t</span> to toggle.',
+    s10c4T: 'One-click copy', s10c4B: 'Copy a whole message, its permalink, or any single code block. Each has its own copy button.',
+    s10c5T: 'Collapsible messages', s10c5B: 'Collapse any message to its header, or collapse them all at once from the sidebar.',
+    s10c6T: 'Print & Markdown', s10c6B: 'Two extra buttons in the sidebar: a <b>Print</b> pill for a clean paper layout, and a <b>Markdown</b> pill that exports the conversation as <code class="inline-code">.md</code>.',
+    s10c7T: 'Reading progress', s10c7B: 'A thin gradient bar at the top shows how far the reader has scrolled through the conversation.',
+    s10c8T: 'Ollama sidebar panel', s10c8B: 'Connect to a local AI, re-title the archive after the fact, and save the result back to disk.',
+    s10c9T: 'Ask AI per message — with write-back', s10c9B: 'Click the robot icon on any message to open a resizable chat panel. Ask questions, summarize, or translate — then push the answer back into the archive with Replace, Prepend, Insert, or Append.',
+    s10c10T: 'Code-block direction controls', s10c10B: 'Every code block has LTR and RTL buttons in its header to force the reading direction. A small Aa button switches between monospace and Vazirmatn for text/plaintext blocks. Your choices stick across edits in the same session.',
+    s10c11T: 'HTML preview', s10c11B: 'Code blocks with the language <code class="inline-code">html</code> get a Preview button. One click renders the HTML in a sandboxed frame below the code, so you can see exactly what it produces without leaving the page.',
+    s10Tip: '<strong>Archive language is independent of the interface.</strong> You can use the manual in Persian and build an English archive — or vice versa. Pick the output language in the builder before generating, and the resulting file carries its own language and direction everywhere.',
+
+    /* ===== 11 Shortcuts ===== */
+    s11Title: 'Keyboard shortcuts',
+    s11Sub: 'A few keys to move faster while building and reading.',
+    s11Builder: 'In the builder',
+    s11b1: 'Add a new block', s11b2: 'Undo the last structural change', s11b3: 'Redo',
+    s11b4: 'Close the preview modal or the Ask-AI panel', s11b5: 'Insert two spaces (in the text area)',
+    s11Archive: 'Inside the generated archive',
+    s11a1: 'Show / hide the sidebar', s11a2: 'Jump to the search box', s11a3: 'Toggle dark / light theme',
+    s11a4: 'Export as Markdown', s11a5: 'Go to the next / previous message', s11a6: 'Close the sidebar or blur the search box',
+
+    /* ===== 12 Tips ===== */
+    s12Title: 'Tips & best practice',
+    s12c1T: 'Give every block a title — or let the AI do it', s12c1B: 'Titles turn the table of contents into a real navigation aid. If you have Ollama connected, one click will title everything for you in the correct language.',
+    s12c2T: 'One AI turn per block', s12c2B: 'If the AI sent several messages, split them into separate blocks. Readers can collapse what they don\'t need.',
+    s12c3T: 'Wrap code in fences', s12c3B: 'Even a single line of code benefits from <code class="inline-code">```</code> fences — it gets syntax-appropriate styling, its own copy button, and LTR/RTL controls. Use <code class="inline-code">```html</code> to unlock the live Preview toggle.',
+    s12c4T: 'Back up important drafts', s12c4B: 'Autosave lives in this browser only. For archives you care about, export the JSON draft as well as the final HTML (and the .md if you want both formats).',
+    s12c5T: 'Save HTML after auto-titling in an archive', s12c5B: 'Re-titling an existing archive won\'t write to disk by itself. Click Save HTML to persist the change.',
+    s12c6T: 'Write back from Ask AI, then Save HTML', s12c6B: 'The four write-back buttons in the AI sidebar change what you see but don\'t save the file. When you\'re happy with the result, click Save HTML to write it to disk.',
+    s12c7T: 'Use LTR/RTL buttons for mixed-language replies', s12c7B: 'If you have a Persian archive and get an English AI reply (or vice versa), click the LTR or RTL button under the reply to force the correct direction. The same applies to code blocks with mixed scripts.',
+    s12c8T: 'Share the .html file directly', s12c8B: 'The archive is fully self-contained — email it, drop it in a chat, or upload it to any static host. No folder of assets required.',
+    s12c9T: 'Paste the .md into your notes app', s12c9B: 'The Markdown export is deliberately clean — no HTML tags, no extra styling — so it looks right in Notion, Obsidian, Bear, GitHub, or anywhere else.',
+
+    /* ===== Mockup strings ===== */
+    mockBadge: 'Example',
+    mockBadgeBuilder: 'In the builder',
+    mockBadgeArchive: 'In the archive',
+    mockArchTitleLabel: 'Archive title',
+    mockArchTitleVal: 'The Art of Color in AI Imagery',
+    mockSubLabel: 'Subtitle', mockSubOpt: '(optional)',
+    mockSubVal: 'A compact course on choosing colors that work together.',
+    mockUserLabel: 'User display name', mockUserVal: 'Eitaa.com/AIDEEP',
+    mockAiLabel: 'AI display name', mockAiVal: 'DeepSeek',
+    mockOutLangLabel: 'Archive language',
+    mockOutLangVal: 'English — left-to-right',
+    mockUserPill: '👤 User', mockAiPill: '🤖 AI',
+    mockUserHint: 'User message', mockAiHint: 'AI response',
+    mockBlockTitle1: 'How do I choose colors for AI-generated images?',
+    mockBlockText1: 'I love generating images with AI, but I have no idea how to pick colors that work well together. Can you give me a compact course on color theory for image generation?',
+    mockWords0: '0 words', mockWords1: '28 words', mockWords2: '56 words',
+    mockBlockTitle2: 'Hue, saturation, and value — the three dimensions of color',
+    mockBlockText2: 'Every color has three properties: **hue** (the color itself — blue, red, yellow), **saturation** (how vivid or muted it is), and **value** (how light or dark it is). A compelling image rarely needs many colors — it needs the *right relationship* between a few.',
+    mockEmptyTitle: 'Add a short title…', mockEmptyText: 'Paste the message text here…',
+    mockAddBlockLabel: 'Add another block',
+    mockGenerateLabel: 'Generate Archive',
+    mockMdBtnLabel: 'Export as Markdown',
+    mockMdShort: 'Markdown',
+    mockPrintBtn: 'Print',
+    mockMdHint: 'Or press m anywhere in the archive',
+    mockStatBlocks: 'Blocks', mockStatWords: 'Words', mockStatCode: 'Code',
+    mockPreviewTitle: 'Archive preview',
+    mockDownload: 'Download .html', mockOpenTab: 'Open in new tab', mockCopyHtml: 'Copy HTML',
+    mockOllamaHeading: 'Ollama Integration',
+    mockConnected: 'Connected',
+    mockModelLabel: 'Model',
+    mockAutoTitle: 'Auto-title',
+    mockSaveHtml: 'Save HTML',
+    mockContextLabel: 'Context:',
+    mockBubbleUser: 'Summarize the key idea in one sentence.',
+    mockBubbleAi: 'Every color has three properties — hue, saturation, and value — and a strong image depends on their relationship, not on the number of colors.',
+    mockBubbleUserBuilder: 'Translate this to Persian and keep the technical terms.',
+    mockBubbleAiBuilder: 'برای تولید تصویر با هوش مصنوعی، ابتدا حال‌وهوای تصویر را انتخاب کن، بعد یک پالت کوچک از رنگ‌های هماهنگ بساز…',
+    mockLtr: 'LTR', mockRtl: 'RTL', mockCopyBtn: 'Copy',
+    mockReplaceBtn: 'Replace', mockPrependBtn: 'Prepend', mockInsertBtn: 'Insert below', mockAppendBtn: 'Append',
+    mockTagSummarize: 'Summarize', mockTagFa: 'To Persian', mockTagEn: 'To English', mockTagAr: 'To Arabic',
+    mockAskPlaceholder: 'Ask a question…',
+
+    footerLine: 'Crafted with care — <a href="https://eitaa.com/AIDEEP" target="_blank" rel="noopener">By AIDEEP</a>',
+    toastLang: 'Language switched',
+    toastTheme: t => t === 'dark' ? 'Dark mode' : 'Light mode'
+  },
+
+  fa: {
+    docTitle: 'آرشیوساز گفتگو | راهنمای کاربر',
+    bismillah: 'بسم الله الرحمن الرحیم',
+    themeToggleTip: 'تغییر پوسته',
+    brandName: 'آرشیوساز گفتگو',
+    brandTag: 'راهنمای کاربر · نسخه ۲.۸',
+    byBrand: 'By AIDEEP',
+    tocTitle: 'در این صفحه',
+    toc1: 'این ابزار چیست؟', toc2: 'شروع سریع', toc3: 'محیط کار شما',
+    toc4: 'ساخت بلوک‌ها', toc5: 'قالب‌بندی متن', toc6: 'یکپارچگی با Ollama',
+    toc7: 'پیش‌نمایش و دانلود', toc8: 'خروجی مارک‌داون', toc9: 'پیش‌نویس و وارد کردن',
+    toc10: 'داخل آرشیو', toc11: 'کلیدهای میان‌بر', toc12: 'نکته‌ها و توصیه‌ها',
+
+    heroBadge: 'راهنمای کاربر · نسخه ۲.۸',
+    heroTitle: 'به آرشیوساز گفتگو مسلط شوید',
+    heroSub: 'هر گفتگوی خام با هوش مصنوعی را به یک آرشیو HTML زیبا و مستقل تبدیل کنید — با عنوان‌گذاری خودکار به‌کمک هوش مصنوعی محلی، دستیار پرسش از هوش مصنوعی در محیط ساخت و آرشیو، کنترل جهت بلوک کد، پیش‌نمایش HTML، پیش‌نویس مستقل هر زبان و خروجی مارک‌داون یک‌کلیکی. این راهنما شامل نمونه‌های واقعی از هر صفحه است.',
+    chip1: 'فایل .html مستقل', chip2: 'آرشیو دوزبانه', chip3: 'خروجی مارک‌داون', chip4: 'آماده برای Ollama',
+
+    s1Title: 'آرشیوساز گفتگو چیست؟',
+    s1Body: 'ابزاری کوچک در مرورگر که متن ساده‌ای را که از هر گفتگوی هوش مصنوعی کپی می‌کنید — <b class="c-strong">ChatGPT، Claude، Gemini، DeepSeek</b> یا هر جای دیگر — برمی‌دارد و آن را به یک <b class="c-strong">آرشیو HTML مستقل و زیبا</b> تبدیل می‌کند. نتیجه، یک فایل <code class="inline-code">.html</code> است که می‌توانید در هر مرورگری باز کنید، با ایمیل یا پیام‌رسان بفرستید، چاپ کنید یا برای همیشه نگه دارید. همین گفتگو را می‌توانید به‌صورت یک فایل <b class="c-strong">مارک‌داون</b> تمیز هم خروجی بگیرید و — به‌صورت اختیاری — از یک هوش مصنوعی محلی برای عنوان‌گذاری خودکار و پاسخ به پرسش‌های بعدی داخل آرشیو استفاده کنید.',
+    s1c1T: 'آفلاین و خصوصی', s1c1B: 'هیچ چیزی جایی آپلود نمی‌شود. همه‌چیز — از چسباندن متن تا پیش‌نمایش و دانلود — در مرورگر خودتان انجام می‌شود.',
+    s1c2T: 'بدون وابستگی', s1c2B: 'فایل تولیدشده هیچ لینک خارجی، فونت اینترنتی یا اسکریپت راه‌دور ندارد. برای همیشه، حتی آفلاین، کار می‌کند.',
+    s1c3T: 'زیبا به‌صورت پیش‌فرض', s1c3B: 'فهرست مطالب، جستجوی زنده، پوسته تاریک و روشن، دکمه‌های کپی یک‌کلیکی، پیام‌های تاشو، کنترل جهت بلوک کد و چیدمان مناسب چاپ.',
+    s1c4T: 'هوش مصنوعی محلی اختیاری', s1c4B: 'به Ollama روی دستگاه خودتان وصل شوید تا همه بلوک‌ها خودکار عنوان‌گذاری شوند و بتوانید پرسش‌های بعدی را داخل آرشیو بپرسید — بدون ابر، بدون هزینه.',
+
+    s2Title: 'شروع سریع',
+    s2Sub: 'از یک صفحه خالی تا یک آرشیو آماده دانلود، در چهار مرحله. هر مرحله یک نمونه واقعی از آنچه می‌بینید نشان می‌دهد.',
+    s2s1T: 'مشخصات آرشیو را وارد کنید',
+    s2s1B: 'برای آرشیو خود یک عنوان، زیرعنوان اختیاری، نام‌های نمایشی کاربر و هوش مصنوعی و زبان خروجی (انگلیسی یا فارسی) انتخاب کنید. این‌ها در سرصفحه آرشیو نهایی و در تب مرورگر نمایش داده می‌شوند.',
+    s2s2T: 'بلوک‌های گفتگو را اضافه کنید',
+    s2s2B: 'روی <b class="c-strong">«افزودن بلوک جدید»</b> کلیک کنید تا پیام تازه‌ای ساخته شود. برای هر بلوک مشخص کنید که پیام <b class="c-user">کاربر</b> است یا پاسخ <b class="c-ai">هوش مصنوعی</b> — این انتخاب رنگ و آیکن بلوک را در آرشیو تعیین می‌کند.',
+    s2s3T: 'متن خود را بچسبانید',
+    s2s3B: 'یک پیام را از گفتگوی هوش مصنوعی کپی کنید و در کادر متن بلوک بچسبانید. در صورت تمایل یک عنوان کوتاه هم بدهید تا در فهرست مطالب آرشیو نمایش داده شود.',
+    s2s4T: 'ساخت و دانلود',
+    s2s4B: 'روی <b class="c-strong">«ساخت آرشیو»</b> کلیک کنید تا پیش‌نمایش فوری باز شود، سپس <b class="c-strong">«دانلود .html»</b> را بزنید تا فایل ذخیره شود. می‌توانید هر زمان <b class="c-strong">«خروجی مارک‌داون»</b> را هم بزنید تا همان گفتگو به‌صورت یک فایل <code class="inline-code">.md</code> دریافت شود.',
+
+    s3Title: 'محیط کار شما',
+    s3Sub: 'رابط کاربری به دو ستون تقسیم شده است. هرچه لازم دارید در یکی از این دو ستون قرار دارد.',
+    s3LeftT: 'ستون چپ — محتوا',
+    s3Left1: 'عنوان، زیرعنوان و نام‌های نمایشی آرشیو',
+    s3Left2: 'انتخاب‌گر زبان آرشیو (خروجی انگلیسی یا فارسی)',
+    s3Left3: 'فهرست بلوک‌های گفتگو',
+    s3Left4: 'دکمه «افزودن بلوک جدید» در پایین',
+    s3RightT: 'ستون راست — اقدامات',
+    s3Right1: 'دکمه «ساخت آرشیو»، «خروجی مارک‌داون» و آمار سریع',
+    s3Right2: 'منوی پروژه: بازگردانی/انجام مجدد، وارد کردن، خروجی JSON، گفتگوی نمونه، پاک کردن همه، بازنشانی داده‌های محلی',
+    s3Right3: 'پنل یکپارچگی با Ollama (هوش مصنوعی محلی اختیاری)',
+    s3Right4: 'راهنمای کوتاه قالب‌بندی برای مراجعه سریع',
+
+    s4Title: 'ساخت بلوک‌ها',
+    s4Sub: 'هر پیام در آرشیو شما یک بلوک است. اینجا دو نمونه پر شده می‌بینید — یک پیام کاربر و یک پاسخ هوش مصنوعی.',
+    s4c1T: 'انتخاب نقش', s4c1B: 'بین 👤 کاربر یا 🤖 هوش مصنوعی یکی را انتخاب کنید. برچسب، رنگ و آیکن بلوک در آرشیو بر همین اساس تغییر می‌کند.',
+    s4c2T: 'عنوان بلوک', s4c2B: 'اختیاری. در فهرست مطالب و بالای پیام نمایش داده می‌شود. اگر آن را خالی بگذارید، به‌طور خودکار «پیام N» استفاده می‌شود — مگر اینکه Ollama خودکار عنوان‌گذاری کند.',
+    s4c3T: 'متن پیام', s4c3B: 'متن خامی که از گفتگو کپی کرده‌اید اینجا بچسبانید. قالب‌بندی حفظ و تقویت می‌شود — بخش بعدی را ببینید.',
+    s4c4T: 'عملیات بلوک', s4c4B: 'با <b>↑</b> و <b>↓</b> جابه‌جا کنید، با <b>+</b> بلوک تازه‌ای زیر آن اضافه کنید، با آیکن ربات درباره این بلوک از هوش مصنوعی بپرسید یا با سطل زباله حذفش کنید. بلوک‌های خالی بدون تأیید حذف می‌شوند.',
+    s4Tip: '<strong>نکته:</strong> هر نوبت پاسخ هوش مصنوعی را در یک بلوک جدا بگذارید. بلوک‌های کوچک‌تر فهرست مطالب تمیزتر و آرشیو خواناتری می‌سازند.',
+    s4moveUp: 'انتقال به بالا', s4moveDown: 'انتقال به پایین', s4insertAfter: 'افزودن بلوک پس از این', s4deleteBlock: 'حذف بلوک',
+
+    s5Title: 'قالب‌بندی متن',
+    s5Sub: 'نیازی به دانستن مارک‌داون نیست. متن را همان‌طور که هست بچسبانید؛ آرشیو این الگوها را به عناصر تمیز و زیبا تبدیل می‌کند.',
+    s5f1: 'بلوک کد — با برچسب زبان، دکمه کپی و کنترل‌های LTR/RTL/Aa.',
+    s5f2: 'کد درون‌خطی — مناسب نام تابع، فایل و دستورها.',
+    s5f3: 'به‌صورت <b class="c-strong">پررنگ</b> نمایش داده می‌شود.',
+    s5f4: 'فهرست نشانه‌دار. خطوط پشت‌سرهمی که با <code class="inline-code">-</code> یا <code class="inline-code">*</code> شروع شوند، یک فهرست می‌سازند.',
+    s5f5: 'فهرست شماره‌دار. با اعداد لاتین و فارسی هر دو کار می‌کند.',
+    s5f6: 'عنوان بخش. یک یا دو <code class="inline-code">#</code> عنوان بزرگ‌تری می‌سازد.',
+    s5f7: 'نقل‌قول با حاشیه رنگی — مناسب هشدارها و جملات برجسته.',
+    s5f8: 'خط جداکننده افقی بین بخش‌ها.',
+    s5f9: 'جدول. با افزودن ردیف <code class="inline-code">| --- | --- |</code> زیر سرصفحه فعال می‌شود.',
+    s5f10: 'پیوندها خودکار شناسایی و به لینک قابل کلیک تبدیل می‌شوند.',
+    s5f11Key: 'خط خالی', s5f11: 'خط خالی پاراگراف جدیدی می‌سازد.',
+
+    /* ===== 06 Ollama ===== */
+    s6Title: 'یکپارچگی با Ollama — هوش مصنوعی محلی اختیاری',
+    s6Sub: 'آرشیوساز را به <b class="c-strong">Ollama</b> وصل کنید — یک برنامه رایگان که مدل‌های هوش مصنوعی را روی رایانه خودتان اجرا می‌کند — تا <b class="c-strong">هر بلوک را خودکار عنوان‌گذاری کند</b> و حتی به پرسش‌های بعدی درست داخل محیط ساخت <b>و</b> آرشیو تولیدشده پاسخ دهد. Ollama کاملاً اختیاری است؛ بقیه امکانات بدون آن هم کار می‌کنند. این بخش نحوه راه‌اندازی و استفاده را نشان می‌دهد.',
+    s6SetupTitle: 'راه‌اندازی Ollama (یک‌بار، حدود ۵ دقیقه)',
+    s6Setup1T: 'Ollama را نصب کنید',
+    s6Setup1B: 'برنامه رایگان را از <b class="c-strong">ollama.com</b> دانلود و نصب کنید. در پس‌زمینه اجرا می‌شود و مدل‌های هوش مصنوعی محلی را میزبانی می‌کند.',
+    s6Setup2T: 'با تنظیم مناسب مرورگر اجرا کنید',
+    s6Setup2B: 'ترمینال یا خط فرمان را باز کنید و دستور مربوط به سیستم خود را اجرا کنید. این کار به Ollama می‌گوید درخواست‌های مرورگر شما را بپذیرد.',
+    s6Windows: 'ویندوز', s6MacLinux: 'مک / لینوکس',
+    s6Setup3T: 'حداقل یک مدل دانلود کنید',
+    s6Setup3B: 'در ترمینال دیگری یک مدل دانلود کنید، مثلاً: <code class="mono">ollama pull gemma4</code>. هر مدلی کار می‌کند — مدل‌های کوچک‌تر سریع‌تر و مدل‌های بزرگ‌تر هوشمندتر هستند.',
+    s6Setup4T: 'در آرشیوساز روی «اتصال به Ollama» کلیک کنید',
+    s6Setup4B: 'به آرشیوساز برگردید، پنل یکپارچگی با Ollama را باز کنید و دکمه اتصال را بزنید. وقتی چراغ سبز شد، متصل هستید.',
+    s6Cors: '<strong>چراغ قرمز؟</strong> تقریباً همیشه یعنی Ollama با تنظیم <code class="mono">OLLAMA_ORIGINS=*</code> از مرحله ۲ اجرا نشده است. آن را ببندید، دستور را دوباره اجرا کنید و دوباره تلاش کنید.',
+    s6BuilderHeading: 'در صفحه ساخت',
+    s6BuilderBody: 'پنل <b class="c-strong">یکپارچگی با Ollama</b> در ستون راست، بین منوی <b class="c-strong">پروژه</b> و کارت <b class="c-strong">راهنمای قالب‌بندی</b> قرار دارد. سه کنترل دارد: دکمه اتصال با چراغ وضعیت، منوی انتخاب مدل (که از مدل‌های نصب‌شده Ollama پر می‌شود) و دکمه عنوان‌گذاری خودکار.',
+    s6LampTip: '<strong>وضعیت چراغ:</strong> سفید = هنوز تلاش نشده، زرد = در حال اتصال، <b style="color:#10b981">سبز</b> = متصل، <b style="color:#ef4444">قرمز</b> = ناموفق.',
+    s6AutoTitleHeading: '«عنوان‌گذاری خودکار» چه کار می‌کند',
+    s6AT1T: 'فقط فیلدهای خالی را پر می‌کند',
+    s6AT1B: 'هر چیزی که خودتان تایپ کرده باشید دست‌نخورده می‌ماند. مدل فقط عنوان‌ها و مشخصات آرشیو را که خالی هستند پر می‌کند.',
+    s6AT2T: 'هم‌زبان با متن مبدأ',
+    s6AT2B: 'گفتگوی انگلیسی عنوان انگلیسی می‌گیرد. گفتگوی فارسی عنوان فارسی. به همین ترتیب — مدل موظف است زبان را طبیعی نگه دارد.',
+    s6AT3T: 'ترتیب کار',
+    s6AT3B: 'هر بلوک بی‌عنوان یک‌به‌یک و به ترتیب عنوان‌گذاری می‌شود. سپس <b class="c-strong">عنوان آرشیو</b> و <b class="c-strong">زیرعنوان</b> از اولین پیام کاربر و اولین پیام هوش مصنوعی — هر جای زنجیره که باشند — ساخته می‌شوند. بنابراین جابه‌جایی یا درج بلوک هرگز ترتیب را به‌هم نمی‌زند.',
+    s6AT4T: 'پشتوانه مطمئن',
+    s6AT4B: 'اگر مدل برای بلوکی چیز مفیدی برنگرداند، یک بریده کوتاه از متن پیام استفاده می‌شود — هیچ‌وقت عنوان خالی نمی‌مانید.',
+    s6AskBuilderHeading: '«پرسش از هوش مصنوعی» در محیط ساخت — دستیار هر بلوک',
+    s6AskBuilderBody: 'هر بلوک در محیط ساخت یک دکمه <b class="c-strong">پرسش از هوش مصنوعی</b> دارد (آیکن ربات، کنار دستگیره جابه‌جایی). با کلیک روی آن، پنل دستیار از کنار باز می‌شود — در انگلیسی از <b>چپ</b> و در فارسی از <b>راست</b>. بلوکی که کلیک کرده‌اید به‌عنوان <b class="c-strong">زمینه</b> تنظیم می‌شود، بنابراین مدل همیشه می‌داند درباره چه چیزی می‌پرسید. می‌توانید از آن بخواهید خلاصه کند، ترجمه کند، بازنویسی کند، توضیح دهد یا هر پرسشی پاسخ دهد — و سپس <b class="c-strong">پاسخ را مستقیم داخل پیش‌نویس خود بنویسید</b>.',
+    s6AskBuilder1T: 'چهار پرسش سریع',
+    s6AskBuilder1B: 'برچسب‌های بالای کادر ورودی فوراً فعال می‌شوند: <b>خلاصه</b>، <b>به فارسی</b>، <b>به انگلیسی</b> و <b>به عربی</b>. با یک کلیک بلوک فعلی را ترجمه یا خلاصه می‌کنند.',
+    s6AskBuilder2T: 'پاسخ‌های جریانی با دکمه توقف',
+    s6AskBuilder2B: 'پاسخ‌ها به‌صورت کلمه‌به‌کلمه ظاهر می‌شوند. تا وقتی مدل در حال نوشتن است، یک دکمه قرمز توقف جای دکمه ارسال را می‌گیرد — با کلیک روی آن پاسخ متوقف می‌شود و آنچه نوشته شده نگه داشته می‌شود.',
+    s6AskBuilder3T: 'نوشتن پاسخ در پیش‌نویس',
+    s6AskBuilder3B: 'زیر هر پاسخ هوش مصنوعی چهار دکمه نوشتن وجود دارد: <b>جایگزینی</b>، <b>درج پیش از</b>، <b>درج پس از</b> و <b>افزودن به انتها</b>. پاسخ را بی‌درنگ داخل پیش‌نویس شما می‌گذارند — جایگزین بلوک، افزودن پیش یا پس از آن، یا افزودن به انتهای زنجیره. <b>جایگزینی</b> نقش بلوک را نگه می‌دارد؛ بلوک‌های درج‌شده یا افزوده‌شده هم نقش بلوک مبدأ را به ارث می‌برند (بخش نوشتن را در همین بخش ببینید).',
+    s6AskBuilder4T: 'گفتگو را به یاد می‌سپارد',
+    s6AskBuilder4B: 'تا وقتی پنل روی همان بلوک باز است، پرسش‌های بعدی کل گفتگو را در زمینه نگه می‌دارند.',
+    s6ArchiveHeading: 'داخل آرشیو تولیدشده',
+    s6ArchiveBody: 'هر آرشیوی که می‌سازید همان پنل Ollama را در نوار کناری، بالای دکمه‌های پوسته، فونت و چاپ، همراه دارد. یک کنترل چهارم هم اضافه می‌کند: <b class="c-strong">ذخیره HTML</b> — چون مرورگرها اجازه نمی‌دهند صفحه بی‌سروصدا روی دیسک خودش را بازنویسی کند.',
+    s6SaveBody: 'بعد از زدن <b class="c-strong">عنوان‌گذاری خودکار</b> در داخل آرشیو، عنوان‌های جدید فوراً دیده می‌شوند — اما فایل روی دیسک شما هنوز تغییر نکرده است. روی <b class="c-strong">ذخیره HTML</b> کلیک کنید تا تغییرات نوشته شوند. مرورگر اولین بار نام فایل را تأیید می‌گیرد و بعد همان فایل را بازنویسی می‌کند. اگر ذخیره پشتیبانی نشود، آرشیو مؤدبانه یک نسخه تازه دانلود می‌کند.',
+    s6SaveWarning: '<strong>توجه:</strong> عنوان‌گذاری خودکار به‌تنهایی چیزی روی دیسک نمی‌نویسد. برای نگه داشتن تغییرات باید <b>ذخیره HTML</b> را بزنید.',
+    s6AskHeading: '«پرسش از هوش مصنوعی» در آرشیو — و چهار حالت نوشتن در متن',
+    s6AskBody: 'هر سرصفحه پیام در آرشیو تولیدشده یک دکمه <b class="c-strong">پرسش از هوش مصنوعی</b> دارد (آیکن ربات). با کلیک روی آن، یک پنل قابل‌تغییر اندازه از کنار باز می‌شود. پیامی که کلیک کرده‌اید به‌عنوان <b class="c-strong">زمینه</b> تنظیم می‌شود — مدل همیشه می‌داند درباره چه چیزی می‌پرسید. و وقتی پاسخ خوبی گرفتید، می‌توانید آن را <b class="c-strong">مستقیم داخل آرشیو بنویسید</b>.',
+    s6Write1T: 'جایگزینی',
+    s6Write1B: 'پاسخ جایگزین متن پیامی می‌شود که درباره آن پرسیده بودید. نقش و عنوان حفظ می‌شود.',
+    s6Write2T: 'درج پیش از',
+    s6Write2B: 'پاسخ به‌عنوان پیام تازه، <b>پیش از</b> پیام مبدأ درج می‌شود. نقش بلوک مبدأ را به ارث می‌برد — پاسخ درباره یک پیام کاربر به کاربر نسبت داده می‌شود، نه به هوش مصنوعی.',
+    s6Write3T: 'درج پس از',
+    s6Write3B: 'پاسخ به‌عنوان پیام تازه، <b>پس از</b> پیام مبدأ درج می‌شود، باز هم با ارث‌بری نقش آن.',
+    s6Write4T: 'افزودن به انتها',
+    s6Write4B: 'پاسخ به‌عنوان پیام تازه در <b>انتهای زنجیره</b> اضافه می‌شود. نقش آن از پیام آخر متناوب می‌شود — بنابراین یک پرسش پس از پاسخ هوش مصنوعی، به‌عنوان بلوک کاربر ثبت می‌شود.',
+    s6WriteWarning: '<strong>بعد از آن ذخیره HTML را بزنید.</strong> نوشتن در متن، آنچه روی صفحه می‌بینید را تغییر می‌دهد اما چیزی روی دیسک نمی‌نویسد. برای نگه داشتن تغییر، <b>ذخیره HTML</b> در نوار کناری را بزنید.',
+    s6WriteDeleteTip: '<strong>حذف بلوک افزوده‌شده:</strong> پیام‌های افزوده‌شده با نوشتن در متن، یک دکمه کوچک <b>×</b> در سرصفحه دارند. کلیک روی آن فقط همان پیام را حذف می‌کند — گفتگوی اصلی هرگز دست نمی‌خورد.',
+    s6AskOtherHeading: 'سایر جزئیات نوار کناری',
+    s6Ask1T: 'چهار پرسش سریع',
+    s6Ask1B: 'برچسب‌های بالای کادر ورودی فوراً فعال می‌شوند: <b>خلاصه</b>، <b>به فارسی</b>، <b>به انگلیسی</b> و <b>به عربی</b>. با یک کلیک پیام فعلی را ترجمه یا خلاصه می‌کنند.',
+    s6Ask2T: 'پاسخ‌های جریانی',
+    s6Ask2B: 'پاسخ‌ها به‌صورت کلمه‌به‌کلمه ظاهر می‌شوند — می‌توانید پیش از تمام شدن شروع به خواندن کنید و هر زمان متوقفش کنید.',
+    s6Ask3T: 'کنترل جهت هر پاسخ',
+    s6Ask3B: 'زیر هر پاسخ هوش مصنوعی، دکمه‌های کوچکی به شما اجازه می‌دهند پاسخ را مجبور به نمایش <b>LTR</b> یا <b>RTL</b> کنید — مناسب گفتگوهای دوزبانه — و پاسخ را در کلیپ‌بورد کپی کنید.',
+    s6Ask4T: 'گفتگو را به یاد می‌سپارد',
+    s6Ask4B: 'تا وقتی نوار کناری روی همان پیام باز است، پرسش‌های بعدی کل گفتگو را در زمینه نگه می‌دارند.',
+
+    /* ===== 07 Preview ===== */
+    s7Title: 'پیش‌نمایش و دانلود',
+    s7Sub: 'وقتی بلوک‌ها آماده شدند، آرشیو را بسازید و روش ذخیره‌سازی را انتخاب کنید.',
+    s7c1T: 'ساخت آرشیو', s7c1B: 'یک پیش‌نمایش زنده در پنجره باز می‌کند. تا وقتی خودتان دانلود نکنید، چیزی روی دیسک ذخیره نمی‌شود.',
+    s7c2T: 'دانلود .html', s7c2B: 'کل آرشیو — استایل‌ها، اسکریپت‌ها و محتوا — را در یک فایل مستقل ذخیره می‌کند. نام فایل از عنوان شما و تاریخ امروز ساخته می‌شود.',
+    s7c3T: 'باز کردن در برگه جدید', s7c3B: 'آرشیو را در یک تب تازه باز می‌کند تا دقیقاً همان‌طور که خواننده می‌بیند آزمایش کنید.',
+    s7c4T: 'کپی HTML', s7c4B: 'کل کد آرشیو را در کلیپ‌بورد کپی می‌کند — مناسب درج در CMS یا سایت استاتیک.',
+    s7Tip: '<strong>پیش‌نمایش زنده است:</strong> هر کاری داخل پیش‌نمایش انجام دهید — عنوان‌گذاری خودکار، نوشتن پاسخ در متن، حذف بلوک افزوده‌شده — هنگام دانلود، باز کردن در برگه جدید یا کپی HTML به‌طور خودکار گرفته می‌شود. ویرایش‌های پیش‌نمایش هرگز از دست نمی‌روند.',
+
+    /* ===== 08 Markdown ===== */
+    s8Title: 'خروجی مارک‌داون',
+    s8Sub: 'در کنار آرشیو HTML، همین گفتگو را می‌توان به‌صورت یک فایل <b class="c-strong">مارک‌داون</b> ساده (<code class="inline-code">.md</code>) خروجی گرفت — عالی برای چسباندن در Notion، Obsidian، GitHub یا هر برنامه یادداشت‌برداری. دو نقطه برای فعال کردن آن وجود دارد و هر دو خروجی یکسانی تولید می‌کنند.',
+    s8OutputTitle: 'فایل چه شکلی است',
+    s8c1T: 'نام فایل',
+    s8c1B: 'به‌صورت <code class="inline-code">{title-slug}-{YYYY-MM-DD}.md</code> ذخیره می‌شود. اگر عنوان خالی باشد، نام پیش‌فرض <code class="inline-code">conversation-archive</code> است.',
+    s8c2T: 'برچسب‌ها همیشه انگلیسی هستند',
+    s8c2B: 'حتی اگر رابط فارسی باشد، برچسب‌های ساختاری مثل <code class="inline-code">**User:**</code> و <code class="inline-code">## Response:</code> انگلیسی می‌مانند تا فایل با هر ابزاری سازگار باشد. فقط <b>متن بدنه</b> زبان اصلی خود را حفظ می‌کند.',
+    s8c3T: 'برخی فیلدها عمداً خالی هستند',
+    s8c3B: '<code class="inline-code">Created:</code>، <code class="inline-code">Updated:</code> و <code class="inline-code">Link:</code> برچسب‌های جای‌نگه‌دار با مقدار خالی هستند. آرشیوساز این اطلاعات را ردیابی نمی‌کند. این‌ها باگ نیستند — فقط فایل را با سایر خروجی‌گیرها سازگار نگه می‌دارند.',
+    s8c4T: 'محافظ بلوک خالی',
+    s8c4B: 'در محیط ساخت، اگر همه بلوک‌ها خالی باشند دکمه کاری نمی‌کند — یک پیام دوستانه می‌بینید که از شما می‌خواهد اول متن اضافه کنید.',
+
+    /* ===== 09 Drafts ===== */
+    s9Title: 'پیش‌نویس، بازگردانی و وارد کردن',
+    s9Sub: 'کار شما به‌صورت خودکار در مرورگر ذخیره می‌شود، می‌توانید تغییرات ساختاری را بازگردانی یا دوباره اجرا کنید و پیش‌نویس‌ها را با JSON بین دستگاه‌ها منتقل کنید.',
+    s9c1T: 'ذخیره خودکار — برای هر زبان جداگانه', s9c1B: 'هر تغییر در آرشیو شما در حافظه محلی همین مرورگر ذخیره می‌شود. هر زبان رابط پیش‌نویس مستقل خودش را دارد، بنابراین جابه‌جایی بین فارسی و انگلیسی هرگز کار در حال انجام را بازنویسی نمی‌کند. اگر پیش‌نویس برای ذخیره ساده بزرگ شود، آرشیوساز آن را خودکار فشرده می‌کند.',
+    s9c2T: 'بازگردانی / انجام مجدد', s9c2B: 'دکمه‌های بالای پنل پروژه، تغییرات <b>ساختاری</b> را بازمی‌گردانند یا دوباره اجرا می‌کنند — افزودن، حذف، جابه‌جایی یا درج بلوک. تایپ داخل یک فیلد از بازگردانی خود مرورگر استفاده می‌کند تا دو سازوکار با هم تعارض نداشته باشند. کلیدهای میان‌بر: <span class="kbd">Ctrl+Z</span> / <span class="kbd">Ctrl+Y</span>.',
+    s9c3T: 'خروجی پیش‌نویس (JSON)', s9c3B: 'یک فایل JSON کوچک شامل عنوان، زیرعنوان، نام‌ها و همه بلوک‌ها دانلود می‌کند. مناسب پشتیبان‌گیری یا اشتراک قالب.',
+    s9c4T: 'وارد کردن', s9c4B: 'هم فایل <code class="inline-code">.json</code> پیش‌نویس و هم یک آرشیو <code class="inline-code">.html</code> تولیدشده را می‌پذیرد. داده‌ها مستقیم از فایل خوانده می‌شوند — نیازی به تایپ دوباره نیست. اگر آرشیو واردشده به زبان دیگری ساخته شده باشد، یادداشتی می‌بینید که توضیح می‌دهد خروجی از رابط فعلی پیروی خواهد کرد.',
+    s9c5T: 'گفتگوی نمونه / پاک کردن همه', s9c5B: 'یک گفتگوی نمونه کوچک برای آشنایی بارگذاری کنید یا همه‌چیز را پاک کنید و از پیش‌نویس خالی شروع کنید.',
+    s9c6T: 'بازنشانی همه داده‌های محلی', s9c6B: 'گزینه انفجاری. هر کلید AIDEEP ذخیره‌شده در این مرورگر را پاک می‌کند — هر دو پیش‌نویس زبانی، تنظیمات و مدل ذخیره‌شده Ollama — و صفحه را بازخوانی می‌کند. اگر می‌خواهید از صفر شروع کنید از این گزینه استفاده کنید.',
+
+    /* ===== 10 Archive ===== */
+    s10Title: 'داخل آرشیو تولیدشده',
+    s10Sub: 'هر آرشیوی که می‌سازید با همان تجربه خواندن همراه است — به‌علاوه پنل اختیاری Ollama و نوار کناری پرسش از هوش مصنوعی در صورت اتصال به یک مدل.',
+    s10c1T: 'فهرست مطالب کنار صفحه', s10c1B: 'چسبیده به سمت چپ (یا در حالت راست‌به‌چپ به سمت راست) با برجسته‌سازی بلوک فعال هنگام پیمایش. کلیک روی هر ورودی شما را مستقیم به آن پیام می‌برد — چه در پیش‌نمایش و چه در فایل ذخیره‌شده.',
+    s10c2T: 'جستجوی زنده', s10c2B: 'با تایپ کردن، فهرست مطالب را فیلتر کنید. با <span class="kbd">/</span> مستقیم به کادر جستجو بپرید.',
+    s10c3T: 'پوسته تاریک و روشن', s10c3B: 'خودکار از سیستم شما پیروی می‌کند و انتخاب شما را به یاد می‌سپارد. با <span class="kbd">t</span> تغییر دهید.',
+    s10c4T: 'کپی یک‌کلیکی', s10c4B: 'کل پیام، پیوند مستقیم آن یا هر بلوک کد را کپی کنید. هرکدام دکمه کپی مستقل دارند.',
+    s10c5T: 'پیام‌های تاشو', s10c5B: 'هر پیام را تا سرصفحه‌اش جمع کنید یا همه را یک‌باره از نوار کناری ببندید.',
+    s10c6T: 'چاپ و مارک‌داون', s10c6B: 'دو دکمه اضافی در نوار کناری: <b>چاپ</b> برای چیدمان تمیز کاغذی، و <b>مارک‌داون</b> برای خروجی گفتگو به‌صورت <code class="inline-code">.md</code>.',
+    s10c7T: 'نوار پیشرفت مطالعه', s10c7B: 'یک نوار نازک رنگی در بالای صفحه نشان می‌دهد خواننده تا کجای گفتگو پیش رفته است.',
+    s10c8T: 'پنل کناری Ollama', s10c8B: 'به یک هوش مصنوعی محلی وصل شوید، آرشیو را بعد از ساخت دوباره عنوان‌گذاری کنید و نتیجه را روی دیسک ذخیره کنید.',
+    s10c9T: 'پرسش از هوش مصنوعی برای هر پیام — با نوشتن در متن', s10c9B: 'روی آیکن ربات هر پیام کلیک کنید تا یک پنل چت قابل‌تغییر اندازه باز شود. بپرسید، خلاصه بگیرید یا ترجمه کنید — سپس پاسخ را با «جایگزینی»، «درج پیش از»، «درج پس از» یا «افزودن به انتها» به آرشیو برگردانید.',
+    s10c10T: 'کنترل جهت بلوک کد', s10c10B: 'هر بلوک کد در سرصفحه‌اش دکمه‌های LTR و RTL دارد تا جهت خواندن را اجبار کند. دکمه کوچک Aa بین مونوسپیس و وزیرمتن برای بلوک‌های متن جابه‌جا می‌کند. انتخاب‌های شما در طول همان نشست روی ویرایش‌ها باقی می‌مانند.',
+    s10c11T: 'پیش‌نمایش HTML', s10c11B: 'بلوک‌های کد با زبان <code class="inline-code">html</code> یک دکمه پیش‌نمایش می‌گیرند. یک کلیک، HTML را در یک قاب سندباکس‌شده زیر کد رندر می‌کند تا بدون ترک کردن صفحه ببینید چه چیزی تولید می‌کند.',
+    s10Tip: '<strong>زبان آرشیو مستقل از رابط کاربری است.</strong> می‌توانید راهنما را فارسی بخوانید و آرشیو انگلیسی بسازید — یا برعکس. زبان خروجی را قبل از ساخت آرشیو در محیط ساخت انتخاب کنید، و فایل تولیدشده زبان و جهت خودش را همه‌جا همراه دارد.',
+
+    /* ===== 11 Shortcuts ===== */
+    s11Title: 'کلیدهای میان‌بر',
+    s11Sub: 'چند کلید برای کار سریع‌تر در حین ساخت و مطالعه.',
+    s11Builder: 'در محیط ساخت',
+    s11b1: 'افزودن بلوک جدید', s11b2: 'بازگردانی آخرین تغییر ساختاری', s11b3: 'انجام مجدد',
+    s11b4: 'بستن پنجره پیش‌نمایش یا پنل پرسش از هوش مصنوعی', s11b5: 'درج دو فاصله (در کادر متن)',
+    s11Archive: 'داخل آرشیو تولیدشده',
+    s11a1: 'نمایش / پنهان کردن نوار کناری', s11a2: 'پرش به کادر جستجو', s11a3: 'تغییر پوسته تاریک / روشن',
+    s11a4: 'خروجی مارک‌داون', s11a5: 'رفتن به پیام بعدی / قبلی', s11a6: 'بستن نوار کناری یا خروج از کادر جستجو',
+
+    /* ===== 12 Tips ===== */
+    s12Title: 'نکته‌ها و توصیه‌ها',
+    s12c1T: 'برای هر بلوک عنوان بگذارید — یا به هوش مصنوعی بسپارید', s12c1B: 'عنوان‌ها فهرست مطالب را به یک ابزار ناوبری واقعی تبدیل می‌کنند. اگر Ollama وصل است، با یک کلیک همه‌چیز به زبان درست عنوان‌گذاری می‌شود.',
+    s12c2T: 'هر نوبت پاسخ، یک بلوک', s12c2B: 'اگر هوش مصنوعی چند پیام فرستاد، آن‌ها را به بلوک‌های جدا تقسیم کنید. خواننده می‌تواند هر بخشی را که لازم ندارد جمع کند.',
+    s12c3T: 'کد را بین ``` بگذارید', s12c3B: 'حتی یک خط کد هم از <code class="inline-code">```</code> بهره می‌برد — استایل مناسب، دکمه کپی مستقل و کنترل جهت LTR/RTL می‌گیرد. از <code class="inline-code">```html</code> برای فعال شدن دکمه پیش‌نمایش زنده استفاده کنید.',
+    s12c4T: 'از پیش‌نویس‌های مهم پشتیبان بگیرید', s12c4B: 'ذخیره خودکار فقط در همین مرورگر است. برای آرشیوهای مهم، هم پیش‌نویس JSON و هم HTML نهایی (و در صورت تمایل .md) را خروجی بگیرید.',
+    s12c5T: 'بعد از عنوان‌گذاری در آرشیو، ذخیره HTML را بزنید', s12c5B: 'عنوان‌گذاری مجدد یک آرشیو موجود، به‌تنهایی روی دیسک نوشته نمی‌شود. برای نگه داشتن تغییرات، ذخیره HTML را بزنید.',
+    s12c6T: 'از پرسش از هوش مصنوعی بنویسید، بعد ذخیره HTML', s12c6B: 'چهار دکمه نوشتن در نوار کناری هوش مصنوعی آنچه می‌بینید را تغییر می‌دهند اما فایل را ذخیره نمی‌کنند. وقتی از نتیجه راضی بودید، ذخیره HTML را برای نوشتن روی دیسک بزنید.',
+    s12c7T: 'برای پاسخ‌های دوزبانه از دکمه‌های RTL/LTR استفاده کنید', s12c7B: 'اگر آرشیو فارسی دارید و پاسخ هوش مصنوعی انگلیسی می‌گیرید (یا برعکس)، دکمه LTR یا RTL زیر پاسخ را بزنید تا جهت درست اعمال شود. همین برای بلوک‌های کد با متن‌های قاطی نیز صادق است.',
+    s12c8T: 'خود فایل .html را به اشتراک بگذارید', s12c8B: 'آرشیو کاملاً مستقل است — آن را ایمیل کنید، در چت بفرستید یا روی هر میزبان استاتیک آپلود کنید. نیازی به پوشه فایل‌های جانبی نیست.',
+    s12c9T: 'فایل .md را در برنامه یادداشت خود بچسبانید', s12c9B: 'خروجی مارک‌داون عمداً تمیز است — بدون تگ HTML، بدون استایل اضافه — پس در Notion، Obsidian، Bear، GitHub و هر جای دیگر درست دیده می‌شود.',
+
+    /* ===== Mockup strings ===== */
+    mockBadge: 'نمونه',
+    mockBadgeBuilder: 'در محیط ساخت',
+    mockBadgeArchive: 'در آرشیو',
+    mockArchTitleLabel: 'عنوان آرشیو',
+    mockArchTitleVal: 'هنر رنگ‌آمیزی برای تصویرسازی با هوش مصنوعی',
+    mockSubLabel: 'زیرعنوان', mockSubOpt: '(اختیاری)',
+    mockSubVal: 'دورهٔ فشرده‌ای برای انتخاب رنگ‌هایی که با هم هماهنگ‌اند.',
+    mockUserLabel: 'نام نمایشی کاربر', mockUserVal: 'لایه‌های عمیق هوش مصنوعی',
+    mockAiLabel: 'نام نمایشی هوش مصنوعی', mockAiVal: 'دیپ‌سیک',
+    mockOutLangLabel: 'زبان آرشیو',
+    mockOutLangVal: 'فارسی — راست‌به‌چپ',
+    mockUserPill: '👤 کاربر', mockAiPill: '🤖 هوش مصنوعی',
+    mockUserHint: 'پیام کاربر', mockAiHint: 'پاسخ هوش مصنوعی',
+    mockBlockTitle1: 'چطور رنگ‌های مناسب برای تصویرسازی انتخاب کنم؟',
+    mockBlockText1: 'به تولید تصویر با هوش مصنوعی علاقه دارم، اما نمی‌دانم چطور رنگ‌هایی انتخاب کنم که با هم هماهنگ باشند. می‌توانی یک دورهٔ فشردهٔ رنگ‌شناسی برایم توضیح دهی؟',
+    mockWords0: '۰ واژه', mockWords1: '۲۴ واژه', mockWords2: '۴۶ واژه',
+    mockBlockTitle2: 'فام، اشباع و روشنی — سه ویژگی هر رنگ',
+    mockBlockText2: 'هر رنگ سه ویژگی دارد: **فام** (خودِ رنگ — آبی، قرمز، زرد)، **اشباع** (چقدر زنده یا خنثی است) و **روشنی** (چقدر روشن یا تیره است). تصویر جذاب معمولاً به رنگ‌های زیاد نیاز ندارد؛ به *رابطهٔ درست* بین چند رنگ نیاز دارد.',
+    mockEmptyTitle: 'یک عنوان کوتاه بنویسید…', mockEmptyText: 'متن پیام را اینجا بچسبانید…',
+    mockAddBlockLabel: 'افزودن بلوک جدید',
+    mockGenerateLabel: 'ساخت آرشیو',
+    mockMdBtnLabel: 'خروجی مارک‌داون',
+    mockMdShort: 'مارک‌داون',
+    mockPrintBtn: 'چاپ',
+    mockMdHint: 'یا در آرشیو کلید m را بزنید',
+    mockStatBlocks: 'بلوک', mockStatWords: 'واژه', mockStatCode: 'بلوک کد',
+    mockPreviewTitle: 'پیش‌نمایش آرشیو',
+    mockDownload: 'دانلود .html', mockOpenTab: 'باز کردن در برگه جدید', mockCopyHtml: 'کپی HTML',
+    mockOllamaHeading: 'یکپارچگی با Ollama',
+    mockConnected: 'متصل',
+    mockModelLabel: 'مدل',
+    mockAutoTitle: 'عنوان‌گذاری خودکار',
+    mockSaveHtml: 'ذخیره HTML',
+    mockContextLabel: 'زمینه:',
+    mockBubbleUser: 'ایدهٔ اصلی را در یک جمله خلاصه کن.',
+    mockBubbleAi: 'هر رنگ سه ویژگی دارد — فام، اشباع و روشنی — و تصویر قوی به رابطهٔ آن‌ها بستگی دارد، نه به تعداد رنگ‌ها.',
+    mockBubbleUserBuilder: 'این را به انگلیسی ترجمه کن و اصطلاحات فنی را حفظ کن.',
+    mockBubbleAiBuilder: 'To generate an image with AI, first choose the mood, then build a small palette of harmonious colors…',
+    mockLtr: 'LTR', mockRtl: 'RTL', mockCopyBtn: 'کپی',
+    mockReplaceBtn: 'جایگزینی', mockPrependBtn: 'درج پیش از', mockInsertBtn: 'درج پس از', mockAppendBtn: 'افزودن به انتها',
+    mockTagSummarize: 'خلاصه', mockTagFa: 'به فارسی', mockTagEn: 'به انگلیسی', mockTagAr: 'به عربی',
+    mockAskPlaceholder: 'پرسشی بپرسید…',
+
+    footerLine: 'با دقت ساخته شده — <a href="https://eitaa.com/AIDEEP" target="_blank" rel="noopener">By AIDEEP</a>',
+    toastLang: 'زبان تغییر کرد',
+    toastTheme: t => t === 'dark' ? 'حالت تاریک' : 'حالت روشن'
+  }
+};
+
+const LS_LANG = 'aideep-manual-lang-v3';
+const LS_THEME = 'aideep-manual-theme-v1';
+
+let lang = localStorage.getItem(LS_LANG) || 'en';
+if (!I18N[lang]) lang = 'en';
+
+function get(obj, path) { return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj); }
+
+function applyLang(l) {
+  const T = I18N[l];
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === 'fa' ? 'rtl' : 'ltr';
+  document.title = T.docTitle;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = get(T, el.dataset.i18n);
+    if (v != null) el.textContent = v;
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const v = get(T, el.dataset.i18nHtml);
+    if (v != null) el.innerHTML = v;
+  });
+  document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+    el.dataset.i18nAttr.split(',').forEach(pair => {
+      const [attr, key] = pair.split(':').map(s => s.trim());
+      const v = get(T, key);
+      if (v != null) el.setAttribute(attr, v);
+    });
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const v = get(T, el.dataset.i18nTitle);
+    if (v != null) el.title = v;
+  });
+
+  document.querySelectorAll('[data-set-lang]').forEach(b => {
+    const on = b.dataset.setLang === l;
+    b.classList.toggle('lang-on', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+}
+
+document.querySelectorAll('[data-set-lang]').forEach(b => {
+  b.addEventListener('click', () => {
+    const l = b.dataset.setLang;
+    if (!I18N[l] || l === lang) return;
+    lang = l;
+    localStorage.setItem(LS_LANG, l);
+    applyLang(l);
+    toast(I18N[l].toastLang);
+  });
+});
+
+/* Theme */
+function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
+let theme = localStorage.getItem(LS_THEME);
+if (theme !== 'light' && theme !== 'dark') {
+  theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+applyTheme(theme);
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(LS_THEME, theme);
+  applyTheme(theme);
+  toast(I18N[lang].toastTheme(theme));
+});
+
+/* Toast */
+const toastEl = document.getElementById('toast');
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toastEl.classList.remove('show'), 1600);
+}
+
+/* Reveal */
+(function reveal() {
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
+  els.forEach(e => io.observe(e));
+})();
+
+/* Card spotlight */
+document.querySelectorAll('.card').forEach(c => {
+  c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  });
+});
+
+/* Progress + ToC */
+const progress = document.getElementById('progress');
+function onScroll() {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  progress.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+(function activeToc() {
+  const items = Array.from(document.querySelectorAll('#toc .toc-item'));
+  const sections = items.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if (!sections.length) return;
+  function update() {
+    const fromTop = window.scrollY + 140;
+    let current = sections[0];
+    for (const s of sections) if (s.offsetTop <= fromTop) current = s;
+    items.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+/* Init */
+applyLang(lang);
+</script>
+</body>
+</html>
