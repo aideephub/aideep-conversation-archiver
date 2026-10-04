@@ -46,8 +46,8 @@
 
 هر دو فایل در همین مخزن موجودند:
 
-- [آرشیوساز (index.html)](./docs/index.html) — راست‌کلیک → Save link as
-- [راهنمای کاربر (manual.html)](./docs/manual.html) — راست‌کلیک → Save link as
+- [آرشیوساز (index.html)](https://aideephub.github.io/aideep-conversation-archiver/) — راست‌کلیک → Save link as
+- [راهنمای کاربر (manual.html)](https://aideephub.github.io/aideep-conversation-archiver/manual.html) — راست‌کلیک → Save link as
 
 یا کل مخزن را کلون کنید:
 git clone https://github.com/aideephub/aideep-conversation-archiver.git
@@ -56,7 +56,7 @@ git clone https://github.com/aideephub/aideep-conversation-archiver.git
 
 ## مجوز
 
-MIT — فایل [LICENSE](./LICENSE) را ببینید.
+مجوز MIT — فایل [LICENSE](./LICENSE) را ببینید.
 
 ---
 

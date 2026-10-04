@@ -46,8 +46,8 @@ The manual is a live, illustrated walkthrough of every feature — including opt
 
 Both files live in this repository:
 
-- [Archiver (index.html)](./docs/index.html) — right-click → Save link as
-- [User manual (manual.html)](./docs/manual.html) — right-click → Save link as
+- [Archiver (index.html)](https://aideephub.github.io/aideep-conversation-archiver/) — right-click → Save link as
+- [User manual (manual.html)](https://aideephub.github.io/aideep-conversation-archiver/manual.html) — right-click → Save link as
 
 Or clone the whole repository:
 
