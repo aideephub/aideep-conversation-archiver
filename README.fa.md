@@ -52,8 +52,6 @@
 یا کل مخزن را کلون کنید:
 git clone https://github.com/aideephub/aideep-conversation-archiver.git
 
-text
-
 ---
 
 ## مجوز
