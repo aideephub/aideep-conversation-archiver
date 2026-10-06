@@ -26,7 +26,7 @@ Nothing is uploaded. Everything happens in your own browser.
 
 The manual is a live, illustrated walkthrough of every feature — including optional local AI integration via Ollama.
 
-> These links are live you can use the archiver and read the manual without downloading them.
+> These links are live and you can use the archiver and read the manual without downloading them.
 
 ---
 
