@@ -26,7 +26,7 @@ Nothing is uploaded. Everything happens in your own browser.
 
 The manual is a live, illustrated walkthrough of every feature — including optional local AI integration via Ollama.
 
-> These live links will start working once GitHub Pages is enabled on this repository.
+> These links are live you can use the archiver and read the manual without downloading them.
 
 ---
 
