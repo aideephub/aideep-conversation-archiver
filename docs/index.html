@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- AIDEEP Conversation Archiver v2.8 — single-file, no build step, no runtime network beyond optional Google Fonts -->
+<!-- AIDEEP Conversation Archiver v2.9 — single-file, no build step, no runtime network beyond optional Google Fonts -->
 <html lang="en" dir="ltr" class="dark">
 <head>
 <meta charset="UTF-8">
@@ -970,9 +970,9 @@ html[dir=rtl] .ai-msg.assistant{border-bottom-left-radius:12px;border-bottom-rig
       </div>
       <button id="importBtn" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition text-start">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        <span><span data-i18n="importLabel">Import</span> <span class="text-slate-500 text-xs" data-i18n="importHint">(.json or a generated .html)</span></span>
+        <span><span data-i18n="importLabel">Import</span> <span class="text-slate-500 text-xs" data-i18n="importHint">(.json or generated .html)</span></span>
       </button>
-      <input id="importFile" type="file" accept=".json,.html,.htm,application/json,text/html" class="hidden">
+      <input id="importFile" type="file" accept=".json,.html,.htm,.md,.markdown,.txt,application/json,text/html,text/markdown,text/plain" class="hidden">
       <button id="exportBtn" class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition text-start">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
         <span data-i18n="exportJson">Export draft as JSON</span>
@@ -1087,7 +1087,7 @@ html[dir=rtl] .ai-msg.assistant{border-bottom-left-radius:12px;border-bottom-rig
    =========================================================================
    Single source of truth. Bump here for every release; the builder title, the
    header badge, and the generated archive's meta/comments all read from it. */
-const APP_VERSION = '2.8';
+const APP_VERSION = '2.9';
 
 /* =========================================================================
    i18n
@@ -1117,7 +1117,7 @@ const I18N = {
     statBlocks: 'Blocks', statWords: 'Words', statCode: 'Code',
     project: 'Project',
     importLabel: 'Import',
-    importHint: '(.json or a generated .html)',
+    importHint: '(.json or .md or .txt or .html)',
     exportJson: 'Export draft as JSON',
     loadSample: 'Load sample conversation',
     clearAll: 'Clear everything',
@@ -1131,6 +1131,7 @@ const I18N = {
       '<li><code class="text-indigo-300"># Heading</code>, <code class="text-indigo-300">&gt; quote</code>, <code class="text-indigo-300">---</code></li>',
       '<li><code class="text-indigo-300">| a | b |</code> with a <code class="text-indigo-300">| --- | --- |</code> row → table</li>',
       '<li>Links are auto-detected. Blank line = new paragraph.</li>',
+      '<li><code class="text-indigo-300">Ctrl+V</code> outside a text field → paste a conversation and split it into blocks</li>',
       '<li>Full list of tags: the user manual.</li>'
     ].join(''),
     autosave: 'Your draft autosaves in this browser.',
@@ -1159,6 +1160,10 @@ const I18N = {
     wordsText: n => Number(n).toLocaleString('en-US') + (n === 1 ? ' word' : ' words'),
     importedMsg: n => 'Imported ' + n + ' blocks',
     importLangNote: 'This archive is in {lang}, but the interface is English — output will follow the interface.',
+        importDetected: (n, u, a, name) =>
+      'Detected ' + n + ' message' + (n === 1 ? '' : 's') + ' — ' + u + ' from the user, ' + a + ' from the AI' + (name ? ' ("' + name + '")' : '') + '.',
+    importHeuristic: 'This looks like a pasted conversation. Parsing is best-effort — please check the roles after importing.',
+    importReplaceWarn: 'Your current draft will be replaced.',
     confirmDeleteBlock: 'Delete this block?',
     confirmClear: 'Clear the archive details and all blocks?',
     confirmReplace: 'Replace your current draft with the imported one?',
@@ -1315,7 +1320,7 @@ const I18N = {
     statBlocks: 'بلوک', statWords: 'واژه', statCode: 'بلوک کد',
     project: 'پروژه',
     importLabel: 'وارد کردن',
-    importHint: '(‎.json یا فایل html تولیدشده)',
+    importHint: '(فایل ‎.json یا ‎.md یا ‎.txt یا html)',
     exportJson: 'خروجی پیش‌نویس (JSON)',
     loadSample: 'بارگذاری گفتگوی نمونه',
     clearAll: 'پاک کردن همه',
@@ -1329,6 +1334,7 @@ const I18N = {
       '<li><code class="text-indigo-300"># عنوان</code>، <code class="text-indigo-300">&gt; نقل‌قول</code>، <code class="text-indigo-300">---</code></li>',
       '<li><code class="text-indigo-300">| a | b |</code> با ردیف <code class="text-indigo-300">| --- | --- |</code> → جدول</li>',
       '<li>پیوندها خودکار شناسایی می‌شود. خط خالی = پاراگراف جدید.</li>',
+      '<li><code class="text-indigo-300">Ctrl+V</code> بیرون از کادر متن → چسباندن گفتگو و تقسیم آن به بلوک‌ها</li>',
       '<li>فهرست کامل تگ‌ها در راهنمای کاربر آمده است.</li>'
     ].join(''),
     autosave: 'پیش‌نویس شما به‌صورت خودکار در این مرورگر ذخیره می‌شود.',
@@ -1357,6 +1363,10 @@ const I18N = {
     wordsText: n => Number(n).toLocaleString('fa-IR') + ' واژه',
     importedMsg: n => Number(n).toLocaleString('fa-IR') + ' بلوک وارد شد',
     importLangNote: 'زبان این آرشیو {lang} است، اما رابط فارسی است — خروجی مطابق رابط ساخته می‌شود.',
+        importDetected: (n, u, a, name) =>
+      'تعداد ' + n + ' پیام شناسایی شد — ' + u + ' از کاربر، ' + a + ' از هوش مصنوعی' + (name ? ' («' + name + '»)' : '') + '.',
+    importHeuristic: 'این متن مانند یک گفتگوی چسبانده‌شده به نظر می‌رسد. تحلیل تقریبی است — نقش‌ها را پس از وارد کردن بررسی کنید.',
+    importReplaceWarn: 'پیش‌نویس فعلی شما جایگزین خواهد شد.',
     confirmDeleteBlock: 'این بلوک حذف شود؟',
     confirmClear: 'مشخصات آرشیو و همه بلوک‌ها پاک شود؟',
     confirmReplace: 'پیش‌نویس فعلی با فایل واردشده جایگزین شود؟',
@@ -3853,32 +3863,235 @@ $('#exportBtn').addEventListener('click', () => {
   toast(I18N[lang].toastExported);
 });
 $('#importBtn').addEventListener('click', () => $('#importFile').click());
+/* =========================================================================
+   Conversation import — markdown / plain-text parsers
+   =========================================================================
+   Two parsers share this section:
+
+   parseArchiverMarkdown — deterministic inverse of buildMarkdown(). Returns
+   null on any structural surprise so the caller falls through.
+
+   parseGenericChat — heuristic. Recognises a small set of known speaker
+   markers (bold name, "Name:", "Name said:", "## Name") on short standalone
+   lines, requires >= 2 distinct markers, and classifies names into user / AI.
+   Deliberately conservative: a paste with no clear markers returns null
+   rather than guessing. NOTE: this whole section is a deliberate v2.9
+   reversal of the "no paste-and-split" decision recorded in HANDOFF v2.8 —
+   do not re-exclude it by habit. */
+
+function parseLooseDate(s) {
+  if (!s) return '';
+  const d = new Date(String(s).trim());
+  return isNaN(d.getTime()) ? '' : d.toISOString();
+}
+
+function parseArchiverMarkdown(text) {
+  if (!text || typeof text !== 'string') return null;
+  let src = text.replace(/\r\n?/g, '\n');
+  // Strip a trailing export footer. Both this archiver and ChatGPT Exporter
+  // put one after a horizontal rule at the end of the file. Without this the
+  // footer text leaks into the last message's body.
+  src = src.replace(/\n+(?:[ \t]*-{3,}[ \t]*\n+)?[ \t]*Powered by[^\n]*\s*$/i, '\n');
+  const lines = src.split('\n');
+  let i = 0;
+  while (i < lines.length && !lines[i].trim()) i++;
+  if (i >= lines.length || !/^#\s+/.test(lines[i])) return null;
+  const title = lines[i].replace(/^#\s+/, '').trim();
+  i++;
+  const fields = {};
+  const blocks = [];
+  let cur = null;
+  const flush = () => {
+    if (!cur) return;
+    const bodyLines = cur.textLines;
+    // Drop leading blank lines, then a lone leading timestamp line (ChatGPT
+    // Exporter emits one right after the header, followed by a blank line).
+    while (bodyLines.length && bodyLines[0].trim() === '') bodyLines.shift();
+    if (bodyLines.length >= 2 && bodyLines[1].trim() === '' &&
+        /^\d{1,4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,4}[,.\s]+\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\s*$/i.test(bodyLines[0].trim())) {
+      bodyLines.splice(0, 2);
+    }
+    cur.text = bodyLines.join('\n').replace(/^\n+|\n+$/g, '');
+    delete cur.textLines;
+    blocks.push(cur);
+  };
+  // NOTE: a `---` inside a message body is a legitimate GFM horizontal rule
+  // and both exporters emit them mid-message. Do NOT break on `---` here — the
+  // only delimiters are the `## Prompt:` / `## Response:` headers, and the
+  // trailing footer was already stripped from `src` above.
+  for (; i < lines.length; i++) {
+    const line = lines[i];
+    if (!cur) {
+      const fm = line.match(/^\*\*([A-Za-z]+):\*\*\s*(.*?)\s*$/);
+      if (fm) { fields[fm[1].toLowerCase()] = fm[2]; continue; }
+    }
+    const hm = line.match(/^##\s+(Prompt|Response)\s*:\s*$/i);
+    if (hm) {
+      flush();
+      cur = { role: hm[1].toLowerCase() === 'response' ? 'ai' : 'user', title: '', textLines: [] };
+      continue;
+    }
+    if (cur) cur.textLines.push(line);
+  }
+  flush();
+  if (!blocks.length) return null;
+  return {
+    title,
+    userName: fields.user || '',
+    createdAt: parseLooseDate(fields.created),
+    updatedAt: parseLooseDate(fields.updated),
+    blocks
+  };
+}
+
+/* Role-word tables + a hard reject list of prose markers that share the
+   "Word:" shape but are never speaker lines. */
+const ROLE_USER_WORDS = ['user', 'you', 'me', 'human', 'q', 'question', 'prompt', 'person', 'asker'];
+const ROLE_AI_WORDS = ['ai', 'a', 'assistant', 'chatgpt', 'claude', 'gemini', 'deepseek',
+  'copilot', 'bot', 'gpt', 'model', 'bard', 'llama', 'mistral', 'grok', 'response', 'answer'];
+const AI_BRAND = /^(chatgpt|claude|gemini|deepseek|copilot|gpt|bard|llama|mistral|grok)/i;
+const NON_SPEAKER = /^(note|example|warning|tip|hint|see|source|reference|citation|todo|fixme|update|edit|re|fwd|important|caution|danger|info|summary|conclusion|intro|introduction|abstract|appendix|footnote|aside|editor|author|date|version|license|tag|label|title|heading|subheading|step|part|section|chapter|ps|nb)$/i;
+
+/* Recognises a standalone speaker line. Returns the cleaned name, or null. */
+function detectMarkerLine(line) {
+  const t = (line || '').trim();
+  if (!t || t.length > 60) return null;
+  let s = t.replace(/^#{1,4}\s+/, '');
+  const wasHeading = s !== t;
+  const wasBold = /^\*\*[^*]+\*\*$/.test(s);
+  if (wasBold) s = s.slice(2, -2);
+  const hadColon = /[:：]\s*$/.test(s);
+  s = s.replace(/[:：]\s*$/, '');
+  s = s.replace(/\s+said\s*$/i, '').trim();
+  if (!wasHeading && !wasBold && !hadColon) return null;
+  if (!s || s.length > 40) return null;
+  if (!/^[A-Za-z\u0600-\u06FF][\w\u0600-\u06FF .'\-]*$/.test(s)) return null;
+  if (NON_SPEAKER.test(s)) return null;
+  return s;
+}
+
+function parseGenericChat(text) {
+  if (!text || typeof text !== 'string') return null;
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const marks = [];
+  for (let i = 0; i < lines.length; i++) {
+    const name = detectMarkerLine(lines[i]);
+    if (name) marks.push({ i, name });
+  }
+  if (marks.length < 2) return null;
+  const display = {};
+  marks.forEach(m => { display[m.name.toLowerCase()] = m.name; });
+  const distinct = [...new Set(marks.map(m => m.name.toLowerCase()))];
+  if (distinct.length < 2) return null;
+  const roles = {};
+  const unknowns = [];
+  for (const n of distinct) {
+    if (ROLE_USER_WORDS.includes(n)) roles[n] = 'user';
+    else if (ROLE_AI_WORDS.includes(n)) roles[n] = 'ai';
+    else unknowns.push(n);
+  }
+  for (const n of unknowns) {
+    const hasUser = Object.values(roles).some(r => r === 'user');
+    const hasAI = Object.values(roles).some(r => r === 'ai');
+    if (!hasUser) roles[n] = 'user';
+    else if (!hasAI) roles[n] = 'ai';
+    else roles[n] = 'user';
+  }
+  // Safety: if every marker collapsed to one role, flip the first-seen.
+  const distinctRoles = new Set(Object.values(roles));
+  if (distinctRoles.size === 1 && distinct.length) {
+    const first = distinct[0];
+    roles[first] = roles[first] === 'ai' ? 'user' : 'ai';
+  }
+  const blocks = [];
+  for (let k = 0; k < marks.length; k++) {
+    const start = marks[k].i + 1;
+    const end = k + 1 < marks.length ? marks[k + 1].i : lines.length;
+    const body = lines.slice(start, end).join('\n').replace(/^\n+|\n+$/g, '');
+    if (!body) continue;
+    blocks.push({ role: roles[marks[k].name.toLowerCase()] || 'user', title: '', text: body });
+  }
+  if (blocks.length < 2) return null;
+  // Only propagate a display name for the AI when the marker is a brand.
+  const aiMarker = distinct.find(n => roles[n] === 'ai');
+  const aiName = aiMarker && AI_BRAND.test(aiMarker) ? display[aiMarker] : '';
+  return { title: '', userName: '', aiName, blocks };
+}
+
+/* Shared confirmation for imports that may have guessed. The count is always
+   shown, the best-effort warning is added for heuristic parses, and the
+   "replace current draft?" question is folded into the same dialog so a
+   single OK means "yes, import". */
+function confirmAndImport(data, opts = {}) {
+  const T = I18N[lang];
+  const blocks = data.blocks || [];
+  if (!blocks.length) return false;
+  const userCount = blocks.filter(b => b.role === 'user').length;
+  const aiCount = blocks.length - userCount;
+  const name = data.aiName || '';
+  const parts = [T.importDetected(blocks.length, userCount, aiCount, name)];
+  if (opts.heuristic) parts.push('', T.importHeuristic);
+  if (state.blocks.some(b => b.text.trim())) parts.push('', T.importReplaceWarn);
+  if (!confirm(parts.join('\n'))) return false;
+  applyData(data, true);
+  return true;
+}
+
 $('#importFile').addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
   const txt = await f.text(); e.target.value = '';
   try {
-    let data;
-    if (/^\s*[\[{]/.test(txt)) data = JSON.parse(txt);
-    else {
-      const doc = new DOMParser().parseFromString(txt, 'text/html');
-      const node = doc.querySelector('#archive-data');
-      if (!node) throw new Error('No archive data found');
-      data = JSON.parse(node.textContent);
+    let data = null;
+    let structured = false;  // JSON / HTML / archiver markdown — no heuristics
+    if (/^\s*[\[{]/.test(txt)) {
+      data = JSON.parse(txt);
+      structured = true;
+    } else {
+      data = parseArchiverMarkdown(txt);
+      if (data) structured = true;
+      if (!data) {
+        try {
+          const doc = new DOMParser().parseFromString(txt, 'text/html');
+          const node = doc.querySelector('#archive-data');
+          if (node) { data = JSON.parse(node.textContent); structured = true; }
+        } catch (err) { /* not HTML */ }
+      }
+      if (!data) data = parseGenericChat(txt);
     }
-    if (!Array.isArray(data.blocks)) throw new Error('Invalid');
-    if (state.blocks.some(b => b.text.trim()) && !confirm(I18N[lang].confirmReplace)) return;
-    // A generated archive records the language it was produced in. We do NOT
-    // switch the interface to match — that would silently swap which per-language
-    // draft gets overwritten — but the user must be told, because the output
-    // language follows the interface and would otherwise change silently.
-    const langMismatch = data.lang && data.lang !== lang && I18N[data.lang];
-    applyData(data, !langMismatch);
-    if (langMismatch) {
-      toast(I18N[lang].importLangNote.replace('{lang}', data.lang === 'fa' ? 'فارسی' : 'English')
-        + ' · ' + I18N[lang].importedMsg(state.blocks.length));
+    if (!data || !Array.isArray(data.blocks) || !data.blocks.length) throw new Error('Invalid');
+    if (structured) {
+      if (state.blocks.some(b => b.text.trim()) && !confirm(I18N[lang].confirmReplace)) return;
+      const langMismatch = data.lang && data.lang !== lang && I18N[data.lang];
+      applyData(data, !langMismatch);
+      if (langMismatch) {
+        toast(I18N[lang].importLangNote.replace('{lang}', data.lang === 'fa' ? 'فارسی' : 'English')
+          + ' · ' + I18N[lang].importedMsg(state.blocks.length));
+      }
+    } else {
+      confirmAndImport(data, { heuristic: true });
     }
   } catch (err) { toast(I18N[lang].toastImportFail); }
 });
+/* Paste a conversation and split it into blocks. Only fires when the paste
+   target is not an editable field, so Ctrl+V inside a textarea still does the
+   obvious thing. Deliberately does NOT try to import raw HTML or JSON — those
+   are file-import flows, and pasting a full archive document would be
+   surprising. Always confirms; a paste never silently overwrites the draft. */
+document.addEventListener('paste', e => {
+  const tag = (e.target && e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+  if (e.target && e.target.isContentEditable) return;
+  if (!modal.classList.contains('hidden')) return;
+  const text = (e.clipboardData && e.clipboardData.getData('text/plain')) || '';
+  if (!text.trim()) return;
+  let data = parseArchiverMarkdown(text);
+  let heuristic = false;
+  if (!data) { data = parseGenericChat(text); if (data) heuristic = true; }
+  if (!data || !data.blocks.length) return;
+  e.preventDefault();
+  confirmAndImport(data, { heuristic });
+});
+
 $('#sampleBtn').addEventListener('click', () => {
   if (state.blocks.some(b => b.text.trim()) && !confirm(I18N[lang].confirmSample)) return;
   applyData(I18N[lang].sample);

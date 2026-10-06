@@ -369,7 +369,7 @@
     </div>
     <div>
       <h1 class="text-lg sm:text-xl font-extrabold tracking-tight c-strong" data-i18n="brandName">Conversation Archiver</h1>
-      <p class="text-xs c-muted" data-i18n="brandTag">User Manual · v2.8</p>
+      <p class="text-xs c-muted" data-i18n="brandTag">User Manual · v2.9</p>
     </div>
   </div>
 
@@ -416,7 +416,7 @@
 
     <!-- Hero -->
     <section class="hero pt-6 pb-10 reveal">
-      <span class="eyebrow"><i></i><span data-i18n="heroBadge">User Manual · v2.8</span></span>
+      <span class="eyebrow"><i></i><span data-i18n="heroBadge">User Manual · v2.9</span></span>
       <h1 data-i18n="heroTitle">Master the Conversation Archiver</h1>
       <p class="lead" data-i18n="heroSub">Turn any raw AI conversation into a polished, self-contained HTML archive — with optional local-AI auto-titling, an Ask-AI assistant in both the builder and the archive, code-block direction controls, an HTML preview, per-language drafts, and one-click Markdown export. This manual includes live examples of every screen.</p>
       <div class="flex flex-wrap gap-2">
@@ -712,6 +712,7 @@
         <div class="fmt-row"><div class="fmt-key"><code class="inline-code">---</code></div><div class="fmt-desc" data-i18n="s5f8">A horizontal divider between sections.</div></div>
         <div class="fmt-row"><div class="fmt-key"><code class="inline-code">| a | b |</code></div><div class="fmt-desc" data-i18n="s5f9">A table. Add a <code class="inline-code">| --- | --- |</code> row under the header to activate it.</div></div>
         <div class="fmt-row"><div class="fmt-key"><code class="inline-code">https://…</code></div><div class="fmt-desc" data-i18n="s5f10">Links are detected automatically and rendered as clickable URLs.</div></div>
+        <div class="fmt-row"><div class="fmt-key"><code class="inline-code">Ctrl+V</code></div><div class="fmt-desc" data-i18n="s5f12">Outside a text field, pastes a conversation and splits it into blocks.</div></div>
         <div class="fmt-row"><div class="fmt-key"><span class="c-muted text-sm" data-i18n="s5f11Key">blank line</span></div><div class="fmt-desc" data-i18n="s5f11">A blank line starts a new paragraph.</div></div>
       </div>
     </section>
@@ -1120,9 +1121,12 @@ Powered by <span class="md-b">[AIDEEP Chat Exporter](https://www.eitaa.com/AIDEE
         <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c2T">Undo / Redo</h3><p class="c-muted text-sm m-0" data-i18n-html="s9c2B">Buttons at the top of the Project panel undo or redo <b>structural</b> changes — adding, deleting, moving, or inserting a block. Typing inside a field uses your browser's own undo, so the two never fight. Shortcuts: <span class="kbd">Ctrl+Z</span> / <span class="kbd">Ctrl+Y</span>.</p></div>
         <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c3T">Export draft as JSON</h3><p class="c-muted text-sm m-0" data-i18n="s9c3B">Downloads a small JSON file containing the title, subtitle, names, and every block. Perfect for backups or sharing a template.</p></div>
         <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c4T">Import</h3><p class="c-muted text-sm m-0" data-i18n-html="s9c4B">Accepts either a draft <code class="inline-code">.json</code> file or a previously generated <code class="inline-code">.html</code> archive. The data is read straight from the file — no re-typing needed. If the imported archive was made in a different language than your interface, you'll see a note explaining that the output will follow your current interface.</p></div>
+        <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c7T">Markdown &amp; plain-text import</h3><p class="c-muted text-sm m-0" data-i18n-html="s9c7B">The Import button also accepts <code class="inline-code">.md</code>, <code class="inline-code">.markdown</code>, and <code class="inline-code">.txt</code> files. A Markdown file exported from this archiver imports cleanly — roles and message bodies are preserved, and titles default to <code class="inline-code">Message 1</code>, <code class="inline-code">Message 2</code>, … (the Auto-title button can fill them in). Markdown from a third-party exporter works too, provided it follows the same <code class="inline-code"># Title</code> + <code class="inline-code">## Prompt:</code> / <code class="inline-code">## Response:</code> shape; a <code class="inline-code">---</code> inside a message body and timestamp lines under a header are both handled correctly.</p></div>
+        <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c8T">Paste-and-split</h3><p class="c-muted text-sm m-0" data-i18n-html="s9c8B">Click on the page background first, then press <span class="kbd">Ctrl</span> + <span class="kbd">V</span>. The archiver reads the clipboard, runs the same parsers used for file import, and splits the conversation into blocks — with the same confirmation dialog. Editable fields are excluded: pasting into a text area or title input still pastes as text, as before.</p></div>
         <div class="card"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c5T">Load sample / Clear all</h3><p class="c-muted text-sm m-0" data-i18n="s9c5B">Load a small sample conversation to explore the tool, or clear everything and start from a blank draft.</p></div>
         <div class="card ai"><h3 class="font-bold mb-1 c-strong" data-i18n="s9c6T">Reset all local data</h3><p class="c-muted text-sm m-0" data-i18n="s9c6B">The nuclear option. Wipes every AIDEEP key stored in this browser — both language drafts, settings, and the saved Ollama model — and reloads. Use this if you want a completely fresh start.</p></div>
       </div>
+      <div class="tip mt-4" data-i18n-html="s9ImportTip"><strong>About the heuristic parser:</strong> when a file or a paste has no clear <code class="inline-code"># Title</code> + <code class="inline-code">## Prompt:</code> structure and no repeated speaker markers, the archiver falls back to a best-effort reader. It recognises the clipboard shapes from ChatGPT, Claude, and Gemini, and anything with a consistent <code class="inline-code">Name:</code> marker — but it is not a universal conversation reader. A paste with no recognisable structure imports as a single user block, which you can split by hand with the Insert button. This is by design.</div>
     </section>
 
     <!-- 10 — Inside the archive -->
@@ -1167,6 +1171,7 @@ Powered by <span class="md-b">[AIDEEP Chat Exporter](https://www.eitaa.com/AIDEE
           <tr><td data-i18n="s11b2">Undo the last structural change</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Z</span></td></tr>
           <tr><td data-i18n="s11b3">Redo</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Y</span></td></tr>
           <tr><td data-i18n="s11b4">Close the preview modal or the Ask-AI panel</td><td><span class="kbd">Esc</span></td></tr>
+          <tr><td data-i18n="s11b6">Paste and split a conversation (outside text fields)</td><td><span class="kbd">Ctrl</span> + <span class="kbd">V</span></td></tr>          
           <tr><td data-i18n="s11b5">Insert two spaces (in the text area)</td><td><span class="kbd">Tab</span></td></tr>
         </tbody>
       </table>
@@ -1225,7 +1230,7 @@ const I18N = {
     bismillah: 'In the name of God',
     themeToggleTip: 'Toggle theme',
     brandName: 'Conversation Archiver',
-    brandTag: 'User Manual · v2.8',
+    brandTag: 'User Manual · v2.9',
     byBrand: 'By AIDEEP',
     tocTitle: 'On this page',
     toc1: 'What is it?', toc2: 'Quick start', toc3: 'Your workspace',
@@ -1233,7 +1238,7 @@ const I18N = {
     toc7: 'Preview & download', toc8: 'Markdown export', toc9: 'Drafts & import',
     toc10: 'Inside the archive', toc11: 'Keyboard shortcuts', toc12: 'Tips & best practice',
 
-    heroBadge: 'User Manual · v2.8',
+    heroBadge: 'User Manual · v2.9',
     heroTitle: 'Master the Conversation Archiver',
     heroSub: 'Turn any raw AI conversation into a polished, self-contained HTML archive — with optional local-AI auto-titling, an Ask-AI assistant in both the builder and the archive, code-block direction controls, an HTML preview, per-language drafts, and one-click Markdown export. This manual includes live examples of every screen.',
     chip1: 'Self-contained .html', chip2: 'Bilingual archives', chip3: 'Markdown export', chip4: 'Ollama ready',
@@ -1291,6 +1296,7 @@ const I18N = {
     s5f9: 'A table. Add a <code class="inline-code">| --- | --- |</code> row under the header to activate it.',
     s5f10: 'Links are detected automatically and rendered as clickable URLs.',
     s5f11Key: 'blank line', s5f11: 'A blank line starts a new paragraph.',
+    s5f12: 'Outside a text field, pastes a conversation and splits it into blocks.',
 
     /* ===== 06 Ollama ===== */
     s6Title: 'Ollama integration — optional local AI',
@@ -1378,13 +1384,16 @@ const I18N = {
 
     /* ===== 09 Drafts ===== */
     s9Title: 'Drafts, undo & import',
-    s9Sub: 'Your work is autosaved in the browser, you can undo and redo structural changes, and you can move drafts between devices with JSON.',
+    s9Sub: 'Your work is autosaved in the browser, you can undo and redo structural changes, and you can import drafts, generated archives, Markdown files, or a pasted conversation.',
     s9c1T: 'Autosave — per language', s9c1B: 'Every change to your archive is saved to this browser\'s local storage. Each interface language keeps its own draft, so switching between EN and FA never overwrites what you were working on. If a draft grows too large for plain storage, the archiver automatically compresses it before giving up.',
     s9c2T: 'Undo / Redo', s9c2B: 'Buttons at the top of the Project panel undo or redo <b>structural</b> changes — adding, deleting, moving, or inserting a block. Typing inside a field uses your browser\'s own undo, so the two never fight. Shortcuts: <span class="kbd">Ctrl+Z</span> / <span class="kbd">Ctrl+Y</span>.',
     s9c3T: 'Export draft as JSON', s9c3B: 'Downloads a small JSON file containing the title, subtitle, names, and every block. Perfect for backups or sharing a template.',
-    s9c4T: 'Import', s9c4B: 'Accepts either a draft <code class="inline-code">.json</code> file or a previously generated <code class="inline-code">.html</code> archive. The data is read straight from the file — no re-typing needed. If the imported archive was made in a different language than your interface, you\'ll see a note explaining that the output will follow your current interface.',
+    s9c4T: 'Import', s9c4B: 'Accepts a draft <code class="inline-code">.json</code>, a generated <code class="inline-code">.html</code> archive, a <code class="inline-code">.md</code> / <code class="inline-code">.markdown</code> file, or a <code class="inline-code">.txt</code> file. The data is read straight from the file — no re-typing needed. If the imported archive was made in a different language than your interface, you\'ll see a note explaining that the output will follow your current interface.',
     s9c5T: 'Load sample / Clear all', s9c5B: 'Load a small sample conversation to explore the tool, or clear everything and start from a blank draft.',
     s9c6T: 'Reset all local data', s9c6B: 'The nuclear option. Wipes every AIDEEP key stored in this browser — both language drafts, settings, and the saved Ollama model — and reloads. Use this if you want a completely fresh start.',
+    s9c7T: 'Markdown & plain-text import', s9c7B: 'The Import button also accepts <code class="inline-code">.md</code>, <code class="inline-code">.markdown</code>, and <code class="inline-code">.txt</code> files. A Markdown file exported from this archiver imports cleanly — roles and message bodies are preserved, and titles default to <code class="inline-code">Message 1</code>, <code class="inline-code">Message 2</code>, … (the Auto-title button can fill them in). Markdown from a third-party exporter works too, provided it follows the same <code class="inline-code"># Title</code> + <code class="inline-code">## Prompt:</code> / <code class="inline-code">## Response:</code> shape; a <code class="inline-code">---</code> inside a message body and timestamp lines under a header are both handled correctly.',
+    s9c8T: 'Paste-and-split', s9c8B: 'Click on the page background first, then press <span class="kbd">Ctrl</span> + <span class="kbd">V</span>. The archiver reads the clipboard, runs the same parsers used for file import, and splits the conversation into blocks — with the same confirmation dialog. Editable fields are excluded: pasting into a text area or title input still pastes as text, as before.',
+    s9ImportTip: '<strong>About the heuristic parser:</strong> when a file or a paste has no clear <code class="inline-code"># Title</code> + <code class="inline-code">## Prompt:</code> structure and no repeated speaker markers, the archiver falls back to a best-effort reader. It recognises the clipboard shapes from ChatGPT, Claude, and Gemini, and anything with a consistent <code class="inline-code">Name:</code> marker — but it is not a universal conversation reader. A paste with no recognisable structure imports as a single user block, which you can split by hand with the Insert button. This is by design.',
 
     /* ===== 10 Archive ===== */
     s10Title: 'Inside the generated archive',
@@ -1408,6 +1417,7 @@ const I18N = {
     s11Builder: 'In the builder',
     s11b1: 'Add a new block', s11b2: 'Undo the last structural change', s11b3: 'Redo',
     s11b4: 'Close the preview modal or the Ask-AI panel', s11b5: 'Insert two spaces (in the text area)',
+    s11b6: 'Paste and split a conversation (outside text fields)',
     s11Archive: 'Inside the generated archive',
     s11a1: 'Show / hide the sidebar', s11a2: 'Jump to the search box', s11a3: 'Toggle dark / light theme',
     s11a4: 'Export as Markdown', s11a5: 'Go to the next / previous message', s11a6: 'Close the sidebar or blur the search box',
@@ -1478,7 +1488,7 @@ const I18N = {
     bismillah: 'بسم الله الرحمن الرحیم',
     themeToggleTip: 'تغییر پوسته',
     brandName: 'آرشیوساز گفتگو',
-    brandTag: 'راهنمای کاربر · نسخه ۲.۸',
+    brandTag: 'راهنمای کاربر · نسخه ۲.۹',
     byBrand: 'By AIDEEP',
     tocTitle: 'در این صفحه',
     toc1: 'این ابزار چیست؟', toc2: 'شروع سریع', toc3: 'محیط کار شما',
@@ -1486,7 +1496,7 @@ const I18N = {
     toc7: 'پیش‌نمایش و دانلود', toc8: 'خروجی مارک‌داون', toc9: 'پیش‌نویس و وارد کردن',
     toc10: 'داخل آرشیو', toc11: 'کلیدهای میان‌بر', toc12: 'نکته‌ها و توصیه‌ها',
 
-    heroBadge: 'راهنمای کاربر · نسخه ۲.۸',
+    heroBadge: 'راهنمای کاربر · نسخه ۲.۹',
     heroTitle: 'به آرشیوساز گفتگو مسلط شوید',
     heroSub: 'هر گفتگوی خام با هوش مصنوعی را به یک آرشیو HTML زیبا و مستقل تبدیل کنید — با عنوان‌گذاری خودکار به‌کمک هوش مصنوعی محلی، دستیار پرسش از هوش مصنوعی در محیط ساخت و آرشیو، کنترل جهت بلوک کد، پیش‌نمایش HTML، پیش‌نویس مستقل هر زبان و خروجی مارک‌داون یک‌کلیکی. این راهنما شامل نمونه‌های واقعی از هر صفحه است.',
     chip1: 'فایل .html مستقل', chip2: 'آرشیو دوزبانه', chip3: 'خروجی مارک‌داون', chip4: 'آماده برای Ollama',
@@ -1544,6 +1554,7 @@ const I18N = {
     s5f9: 'جدول. با افزودن ردیف <code class="inline-code">| --- | --- |</code> زیر سرصفحه فعال می‌شود.',
     s5f10: 'پیوندها خودکار شناسایی و به لینک قابل کلیک تبدیل می‌شوند.',
     s5f11Key: 'خط خالی', s5f11: 'خط خالی پاراگراف جدیدی می‌سازد.',
+    s5f12: 'بیرون از یک فیلد متنی، یک گفتگو را می‌چسباند و به بلوک‌ها تقسیم می‌کند.',
 
     /* ===== 06 Ollama ===== */
     s6Title: 'یکپارچگی با Ollama — هوش مصنوعی محلی اختیاری',
@@ -1631,13 +1642,16 @@ const I18N = {
 
     /* ===== 09 Drafts ===== */
     s9Title: 'پیش‌نویس، بازگردانی و وارد کردن',
-    s9Sub: 'کار شما به‌صورت خودکار در مرورگر ذخیره می‌شود، می‌توانید تغییرات ساختاری را بازگردانی یا دوباره اجرا کنید و پیش‌نویس‌ها را با JSON بین دستگاه‌ها منتقل کنید.',
+    s9Sub: 'کار شما به‌صورت خودکار در مرورگر ذخیره می‌شود، می‌توانید تغییرات ساختاری را بازگردانی یا دوباره اجرا کنید و پیش‌نویس، آرشیو تولیدشده، فایل مارک‌داون یا یک گفتگوی چسبانده‌شده را وارد کنید.',
     s9c1T: 'ذخیره خودکار — برای هر زبان جداگانه', s9c1B: 'هر تغییر در آرشیو شما در حافظه محلی همین مرورگر ذخیره می‌شود. هر زبان رابط پیش‌نویس مستقل خودش را دارد، بنابراین جابه‌جایی بین فارسی و انگلیسی هرگز کار در حال انجام را بازنویسی نمی‌کند. اگر پیش‌نویس برای ذخیره ساده بزرگ شود، آرشیوساز آن را خودکار فشرده می‌کند.',
     s9c2T: 'بازگردانی / انجام مجدد', s9c2B: 'دکمه‌های بالای پنل پروژه، تغییرات <b>ساختاری</b> را بازمی‌گردانند یا دوباره اجرا می‌کنند — افزودن، حذف، جابه‌جایی یا درج بلوک. تایپ داخل یک فیلد از بازگردانی خود مرورگر استفاده می‌کند تا دو سازوکار با هم تعارض نداشته باشند. کلیدهای میان‌بر: <span class="kbd">Ctrl+Z</span> / <span class="kbd">Ctrl+Y</span>.',
     s9c3T: 'خروجی پیش‌نویس (JSON)', s9c3B: 'یک فایل JSON کوچک شامل عنوان، زیرعنوان، نام‌ها و همه بلوک‌ها دانلود می‌کند. مناسب پشتیبان‌گیری یا اشتراک قالب.',
-    s9c4T: 'وارد کردن', s9c4B: 'هم فایل <code class="inline-code">.json</code> پیش‌نویس و هم یک آرشیو <code class="inline-code">.html</code> تولیدشده را می‌پذیرد. داده‌ها مستقیم از فایل خوانده می‌شوند — نیازی به تایپ دوباره نیست. اگر آرشیو واردشده به زبان دیگری ساخته شده باشد، یادداشتی می‌بینید که توضیح می‌دهد خروجی از رابط فعلی پیروی خواهد کرد.',
+    s9c4T: 'وارد کردن', s9c4B: 'فایل <code class="inline-code">.json</code> پیش‌نویس، آرشیو <code class="inline-code">.html</code> تولیدشده، فایل <code class="inline-code">.md</code> / <code class="inline-code">.markdown</code> یا فایل <code class="inline-code">.txt</code> را می‌پذیرد. داده‌ها مستقیم از فایل خوانده می‌شوند — نیازی به تایپ دوباره نیست. اگر آرشیو واردشده به زبان دیگری ساخته شده باشد، یادداشتی می‌بینید که توضیح می‌دهد خروجی از رابط فعلی پیروی خواهد کرد.',
     s9c5T: 'گفتگوی نمونه / پاک کردن همه', s9c5B: 'یک گفتگوی نمونه کوچک برای آشنایی بارگذاری کنید یا همه‌چیز را پاک کنید و از پیش‌نویس خالی شروع کنید.',
     s9c6T: 'بازنشانی همه داده‌های محلی', s9c6B: 'گزینه انفجاری. هر کلید AIDEEP ذخیره‌شده در این مرورگر را پاک می‌کند — هر دو پیش‌نویس زبانی، تنظیمات و مدل ذخیره‌شده Ollama — و صفحه را بازخوانی می‌کند. اگر می‌خواهید از صفر شروع کنید از این گزینه استفاده کنید.',
+    s9c7T: 'وارد کردن مارک‌داون و متن ساده', s9c7B: 'دکمه وارد کردن فایل‌های <code class="inline-code">.md</code>، <code class="inline-code">.markdown</code> و <code class="inline-code">.txt</code> را هم می‌پذیرد. فایل مارک‌داونی که از همین آرشیوساز خروجی گرفته شده، تمیز وارد می‌شود — نقش‌ها و متن پیام‌ها حفظ می‌شوند و عنوان‌ها به‌طور پیش‌فرض <code class="inline-code">پیام ۱</code>، <code class="inline-code">پیام ۲</code>، … می‌شوند (دکمه عنوان‌گذاری خودکار آن‌ها را پر می‌کند). مارک‌داون دیگر خروجی‌گیرها هم کار می‌کند، به شرطی که قالب یکسان <code class="inline-code"># Title</code> + <code class="inline-code">## Prompt:</code> / <code class="inline-code">## Response:</code> را رعایت کند؛ <code class="inline-code">---</code> درون متن پیام و خطوط تاریخ زیر هر سرصفحه هر دو درست مدیریت می‌شوند.',
+    s9c8T: 'چسباندن و تقسیم', s9c8B: 'اول روی پس‌زمینه صفحه کلیک کنید، بعد <span class="kbd">Ctrl</span> + <span class="kbd">V</span> را بزنید. آرشیوساز محتوای کلیپ‌بورد را می‌خواند، همان دو تجزیه‌گر وارد کردن فایل را اجرا می‌کند و گفتگو را به بلوک‌ها تقسیم می‌کند — با همان پنجره تأیید. فیلدهای قابل ویرایش مستثنا هستند: چسباندن در یک کادر متن یا فیلد عنوان، مثل قبل به‌صورت متن می‌چسبد.',
+    s9ImportTip: '<strong>دربارهٔ تجزیه‌گر تقریبی:</strong> وقتی یک فایل یا متن چسبانده‌شده ساختار روشن <code class="inline-code"># Title</code> + <code class="inline-code">## Prompt:</code> و نشانگرهای تکرارشونده گوینده نداشته باشد، آرشیوساز به یک خوانندهٔ تقریبی برمی‌گردد. قالب‌های کلیپ‌بورد ChatGPT، Claude و Gemini و هر متنی با نشانگر ثابت <code class="inline-code">Name:</code> را می‌شناسد — اما یک خوانندهٔ جهانی گفتگو نیست. متنی که ساختار قابل تشخیصی ندارد، به‌صورت یک بلوک کاربر وارد می‌شود که می‌توانید با دکمه درج، دستی آن را تقسیم کنید. این یک انتخاب طراحی است.',
 
     /* ===== 10 Archive ===== */
     s10Title: 'داخل آرشیو تولیدشده',
@@ -1661,6 +1675,7 @@ const I18N = {
     s11Builder: 'در محیط ساخت',
     s11b1: 'افزودن بلوک جدید', s11b2: 'بازگردانی آخرین تغییر ساختاری', s11b3: 'انجام مجدد',
     s11b4: 'بستن پنجره پیش‌نمایش یا پنل پرسش از هوش مصنوعی', s11b5: 'درج دو فاصله (در کادر متن)',
+    s11b6: 'چسباندن و تقسیم گفتگو (بیرون از فیلدهای متنی)',    
     s11Archive: 'داخل آرشیو تولیدشده',
     s11a1: 'نمایش / پنهان کردن نوار کناری', s11a2: 'پرش به کادر جستجو', s11a3: 'تغییر پوسته تاریک / روشن',
     s11a4: 'خروجی مارک‌داون', s11a5: 'رفتن به پیام بعدی / قبلی', s11a6: 'بستن نوار کناری یا خروج از کادر جستجو',
